@@ -1,5 +1,4 @@
 import { StackScreenProps } from '@react-navigation/stack';
-import { Project } from 'components/ProjectList';
 import dedent from 'dedent';
 import { take, takeRight } from 'lodash';
 import React from 'react';
@@ -8,7 +7,7 @@ import FadeIn from 'react-native-fade-in-image';
 
 import Colors from '../constants/Colors';
 import SharedStyles from '../constants/SharedStyles';
-import { ProfileData } from '../containers/Profile';
+import { CommonAppDataFragment, Home_ProfileData2Query } from '../graphql/types';
 import { AllStackRoutes } from '../navigation/Navigation.types';
 import EmptyAccountProjectsNotice from './EmptyAccountProjectsNotice';
 import EmptyAccountSnacksNotice from './EmptyAccountSnacksNotice';
@@ -42,7 +41,7 @@ type QueryProps = {
   loading: boolean;
   error?: Error;
   refetch: (props: any) => void;
-  data?: ProfileData;
+  data?: Home_ProfileData2Query;
 };
 
 type Props = ProfileViewProps & QueryProps;
@@ -95,7 +94,7 @@ export default function ProfileView({ navigation, loading, error, refetch, data 
     );
   }
 
-  if (loading) {
+  if (loading && !isRefreshing) {
     return (
       <View style={{ flex: 1, padding: 30, alignItems: 'center' }}>
         <ActivityIndicator color={Colors.light.tintColor} />
@@ -220,7 +219,7 @@ function ProfileProjectsSection({
     navigation.navigate('ProfileAllProjects', {});
   };
 
-  const renderApp = (app: Project, i: number) => {
+  const renderApp = (app: CommonAppDataFragment, i: number) => {
     return (
       <ProjectListItem
         key={i}

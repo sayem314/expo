@@ -8,6 +8,47 @@
 
 ### 🐛 Bug fixes
 
+### 💡 Others
+
+- Updated `@expo/config-plugins` from `4.0.2` to `4.0.14` ([#15621](https://github.com/expo/expo/pull/15621) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 11.2.0 — 2021-12-03
+
+### 🐛 Bug fixes
+
+- Fixed `BarCodeScanner` only scans on the first mount on Android. ([#15393](https://github.com/expo/expo/pull/15393) by [@lukmccall](https://github.com/lukmccall))
+- Fixed crashes caused by the Zxing scanner on Android. ([#15394](https://github.com/expo/expo/pull/15394) by [@lukmccall](https://github.com/lukmccall))
+
+## 11.1.0 — 2021-10-01
+
+### 🐛 Bug fixes
+
+- Added missing dependency on `expo-image-loader`. ([#14585](https://github.com/expo/expo/pull/14585) by [@tsapeta](https://github.com/tsapeta))
+
+## 11.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🎉 New features
+
+- Add BarCodeScanner.usePermissions hook from modules factory. ([#13852](https://github.com/expo/expo/pull/13852) by [@bycedric](https://github.com/bycedric))
+
+### 🐛 Bug fixes
+
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Migrated from `@unimodules/core` to `expo-modules-core`. ([#13757](https://github.com/expo/expo/pull/13757) by [@tsapeta](https://github.com/tsapeta))
+- Migrated Android codebase from Java to Kotlin. ([#13914](https://github.com/expo/expo/pull/13914) by [@m1st4ke](https://github.com/m1st4ke))
+- Updated `@expo/config-plugins` ([#14443](https://github.com/expo/expo/pull/14443) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 10.2.0 — 2021-06-16
+
+### 🐛 Bug fixes
+
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))
 - On iOS removed the requirement for the presence of `NSMicrophoneUsageDescription` key in `Info.plist` ([#12860](https://github.com/expo/expo/pull/12772) by [@ajsmth](https://github.com/ajsmth))
 

@@ -216,8 +216,8 @@ In the managed workflow, we use our forked `react-native` repository because we 
 
 **How:**
 
-- Go through another guide about [Quality Assurance](./Quality%20Assurance.md). Use `UNVERSIONED` as a `sdkVersion`.
-- Fix everything you noticed in quality assurance steps or delegate these issues to other people in a team (preferably unimodule owners). Fixes for all discovered bugs should land on `master` and then be cherry-picked to the `sdk-XX` branch before versioning.
+- Go through the [Quality Assurance](Quality%20Assurance.md) guide. Use `UNVERSIONED` as a `sdkVersion`.
+- Fix everything you noticed in quality assurance steps or delegate these issues to other people in a team (preferably unimodule owners). Fixes for all discovered bugs should land on `master` and then be cherry-picked to the `sdk-XX` branch (if it exists) before versioning.
 
 ## 1.3. Version code for the new SDK
 
@@ -237,6 +237,8 @@ In the managed workflow, we use our forked `react-native` repository because we 
 - **Android**:
   - Run `et add-sdk --platform android` to create the new versioned AAR and expoview code. This script will attempt to rename some native libraries and will ask you to manually verify that it has renamed them all properly. If you notice some that are missing, add them to the list in `tools/src/versioning/android/libraries.ts` and rerun the script. Commit the changes.
   - You may need to make a change like [this one](https://github.com/expo/expo/commit/8581608ab748ed3092b71befc3a0b8a48f0f20a0#diff-c31b32364ce19ca8fcd150a417ecce58) in order to get the project to build, as the manifest merger script we're currently using doesn't handle this properly.
+  - Some libraries (particularly expo-notifications and expo-updates) include classes and singletons that should be left out of versioning on Android -- i.e. of which there should only be one copy of in Expo Go. The file `tools/src/versioning/android/android-packages-to-rename.txt` contains all the Java/Kotlin packages and classes that will be versioned, and `tools/src/versioning/android/android-packages-to-keep.txt` contains all the packages and classes that will be left out of versioning (with the latter taking precedence over the former). If you run into compilation errors like `incompatible types: expo.modules.... cannot be converted to abixx_x_x.expo.modules...`, especially in one of the aforementioned modules, it's possible one or both of these lists may need to be updated with classes that have been added since the last SDK release.
+  - The versioning script is not idempotent, so if you need to make any changes or re-version any libraries, the simplest way to do so is either make the changes manually in versioned classes (if they are very simple) or remove the SDK and re-add it. If you run `et remove-sdk --platform android --sdkVersion XX.X.X && et add-sdk --platform android` then the resulting diff should just include the re-versioned changes, and it's easy to check this manually.
 - Commit the changes to the `sdk-XX` branch and push. Take a look at the GitHub stats of added/deleted lines in your commit and be proud of your most productive day this month 😎.
 
 ## 1.4. Update JS dependencies required for build
@@ -262,7 +264,7 @@ In the managed workflow, we use our forked `react-native` repository because we 
 **How:**
 
 - On iOS, by default, Expo Go builds with only unversioned code. Make sure to switch the scheme to `Expo Go (versioned)` in Xcode before building the app for versioned QA.
-- Go through another guide about [Quality Assurance](Quality%20Assurance.md).
+- Go through the [Quality Assurance](Quality%20Assurance.md) guide.
 - Commit any fixes to `master` and cherry-pick to the `sdk-XX` branch.
 
 ## 2.2. Standalone App Quality Assurance
@@ -280,7 +282,8 @@ In the managed workflow, we use our forked `react-native` repository because we 
 - Before proceeding, you may want to publish `native-component-list` for the SDK version that you are testing.
 
 - **Android**:
-  - The process for building a standalone app locally is to publish the app you want to build and then run `et android-shell-app --url <url> --sdkVersion XX.X.X`.
+  - The process for building a standalone app locally is to publish the app you want to build and then run `et android-build-packages` and then `et android-shell-app --url <url> --sdkVersion XX.X.X`. Once the app is built you can find it in `/tmp/shell-debug.apk`.
+  - Once you're done testing this, delete `~/.m2/repository` or you will not be able to build other React Native Android projects.
 - **iOS**:
   - To create a workspace that you can open up in Xcode and build/run/debug:
     - `et ios-shell-app --action create-workspace -u "https://exp.host/@username/project-slug/index.exp?sdkVersion=xx.0.0" -s xx.0.0 --skipRepoUpdate`.
@@ -472,15 +475,15 @@ Once everything above is completed and Apple has approved Expo Go (iOS) for the 
 **How:**
 
 - For each of the following packages, run `et update-versions -k 'relatedPackages.<package-name>' -v '^X.Y.Z'`
-  - `typescript`
-  - `@types/react`
-  - `@types/react-dom`
-  - `@types/react-native`
-  - `react-native-web`
-  - `babel-preset-expo`
   - `@babel/core`
   - `@expo/webpack-config`
-  - `react-native-unimodules`
+  - `@types/react-dom`
+  - `@types/react-native`
+  - `@types/react`
+  - `babel-preset-expo`
+  - `jest`
+  - `react-native-web`
+  - `typescript`
 - One way to get the right version numbers is to run `yarn why <package-name>` to see which version is used by apps in the expo/expo repo. Generally the version numbers should have a carat (`^`) except for `react-native-unimodules`, which should have a tilde (`~`).
 
 ## 5.4. Re-publish project templates
@@ -523,6 +526,7 @@ Publish a blog post that includes the following information:
 - Link to a GitHub umbrella issue for beta release issues
 - Link to CHANGELOG
 - Provide instructions for how to opt-in
+- Create and link to an issue that tracks changes and releases during beta testing
 
 ## 5.8. Test, fix, and monitor
 
@@ -535,6 +539,7 @@ Publish a blog post that includes the following information:
 - Test out new features.
 - Report updates in the umbrealla issue.
 - Fix, test, repeat.
+- Update issue with fixes from latest beta release
 
 ## 5.9. Submit iOS Expo Go for review
 
@@ -575,17 +580,7 @@ Publish a blog post that includes the following information:
   - Open `Android Client` workflow on GitHub Actions and when it completes, download the APK from Artifacts and do a smoke test -- install it on a fresh Android device, turn on airplane mode, and make sure Home loads.
   - Run `et dispatch client-android-release` to trigger appropriate job on GitHub Actions. About 45 minutes later the update should be **downloadable** via Play Store.
 
-## 6.2. Make adhoc client shell app for iOS
-
-**Why:** The client shell app is the base app for the custom client workflow on iOS (also known as the Adhoc build workflow). We only support one version of the custom client at any given time, and there isn't much value in testing it in the beta release period because we are already testing simulator and app store versions of Expo Go.
-
-**How:**
-
-- Follow the same workflow as [4.2. Make shell app build](#42-make-shell-app-build), but instead run `et dispatch ad-hoc-client-shell-app-ios-upload`.
-- Copy the URL to the `shellTarballs/ios/client` file in `expo/turtle` and update the CHANGELOG.
-- Deploy to staging, test, and deploy to production.
-
-## 6.3. Promote packages to latest on NPM registry
+## 6.2. Promote packages to latest on NPM registry
 
 **Why:** Previously we've published packages and now that we have gone through beta testing and everything is good to go, we can promote those packages to `latest` on NPM.
 
@@ -594,7 +589,7 @@ Publish a blog post that includes the following information:
 - Use the `et promote-packages` script.
 - Select the packages that should be promoted and continue.
 
-## 6.4. Remove beta tag from new SDK on versions endpoint
+## 6.3. Remove beta tag from new SDK on versions endpoint
 
 **Why:** Make the new SDK the default for everything that depends on the versions endpoint, eg: `expo upgrade`.
 
@@ -604,13 +599,13 @@ Publish a blog post that includes the following information:
 - `et promote-versions-to-prod`
 - Double check every change before pressing `y`!
 
-## 6.5. Remove beta tag from new SDK on Snack
+## 6.4. Remove beta tag from new SDK on Snack
 
 **Why:** Once the new SDK is available publicly, we should switch to using it by default on Snack.
 
 **How:** Reach out to Hein (@ijzerenhein)
 
-## 6.6. Deploy final docs
+## 6.5. Deploy final docs
 
 **Why:** Show the new docs by default now that the SDK is being released!
 
@@ -619,7 +614,7 @@ Publish a blog post that includes the following information:
 - Update the `version` field docs/package.json to match the new SDK version, delete the `betaVersion` field, and push to master.
 - Ensure that the new SDK version is visible in the API reference and is marked as latest.
 
-## 6.7. Publish final project templates
+## 6.6. Publish final project templates
 
 **Why:** We need to make sure the templates point to the latest versions of our packages and update the tags on npm so they will be used by default with `expo init`.
 
@@ -630,7 +625,7 @@ Publish a blog post that includes the following information:
 - Run `et publish-templates`/`et ppt` and answer to questions it asks. **IMPORTANT:** These versions should be tagged as `latest` and `sdk-xx` where `xx` is the major version for the SDK being released.
 - If everything works as expected, commit changes to master and make sure to cherry-pick that commit to the release branch as well.
 
-## 6.8. Press release
+## 6.7. Press release
 
 | Prerequisites          |
 | ---------------------- |

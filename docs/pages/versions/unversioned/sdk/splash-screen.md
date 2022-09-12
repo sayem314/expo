@@ -1,10 +1,11 @@
 ---
 title: SplashScreen
 sourceCodeUrl: 'https://github.com/expo/expo/tree/master/packages/expo-splash-screen'
+packageName: 'expo-splash-screen'
 ---
 
 import APISection from '~/components/plugins/APISection';
-import InstallSection from '~/components/plugins/InstallSection';
+import {APIInstallSection} from '~/components/plugins/InstallSection';
 import PlatformsSection from '~/components/plugins/PlatformsSection';
 
 The `SplashScreen` module tells the splash screen to remain visible until it has been explicitly told to hide. This is useful to do some work behind the scenes before displaying your app (eg: make API calls) and to animated your splash screen (eg: fade out or slide away, or switch from a static splash screen to an animated splash screen).
@@ -15,7 +16,7 @@ Read more about [creating a splash screen image](../../../guides/splash-screens.
 
 ## Installation
 
-<InstallSection packageName="expo-splash-screen" />
+<APIInstallSection />
 
 ## Usage
 
@@ -23,7 +24,7 @@ This example shows how to keep the splash screen visible while loading app resou
 
 ```js
 import React, { useCallback, useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { Entypo } from '@expo/vector-icons';
 import * as SplashScreen from 'expo-splash-screen';
 import * as Font from 'expo-font';

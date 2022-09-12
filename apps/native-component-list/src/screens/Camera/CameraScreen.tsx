@@ -4,8 +4,15 @@ import MaterialCommunityIcons from '@expo/vector-icons/build/MaterialCommunityIc
 import MaterialIcons from '@expo/vector-icons/build/MaterialIcons';
 import Octicons from '@expo/vector-icons/build/Octicons';
 import { BarCodeScanner } from 'expo-barcode-scanner';
-import { BarCodeScanningResult, Camera, PermissionStatus } from 'expo-camera';
-import { AutoFocus, CameraType, FlashMode, WhiteBalance } from 'expo-camera/build/Camera.types';
+import {
+  AutoFocus,
+  BarCodeScanningResult,
+  Camera,
+  CameraType,
+  FlashMode,
+  PermissionStatus,
+  WhiteBalance,
+} from 'expo-camera';
 import Constants from 'expo-constants';
 import * as FileSystem from 'expo-file-system';
 import React from 'react';
@@ -87,12 +94,12 @@ interface State {
 // eslint-disable-next-line @typescript-eslint/ban-types
 export default class CameraScreen extends React.Component<{}, State> {
   readonly state: State = {
-    flash: 'off',
+    flash: FlashMode.off,
     zoom: 0,
-    autoFocus: 'on',
+    autoFocus: AutoFocus.on,
     type: CameraType.back,
     depth: 0,
-    whiteBalance: 'auto',
+    whiteBalance: WhiteBalance.auto,
     ratio: '16:9',
     ratios: [],
     barcodeScanning: false,
@@ -112,7 +119,7 @@ export default class CameraScreen extends React.Component<{}, State> {
     if (Platform.OS !== 'web') {
       this.ensureDirectoryExistsAsync();
     }
-    Camera.requestPermissionsAsync().then(({ status }) => {
+    Camera.requestCameraPermissionsAsync().then(({ status }) => {
       this.setState({ permission: status, permissionsGranted: status === 'granted' });
     });
   }
@@ -129,34 +136,34 @@ export default class CameraScreen extends React.Component<{}, State> {
   getRatios = async () => this.camera!.getSupportedRatiosAsync();
 
   toggleView = () =>
-    this.setState(state => ({ showGallery: !state.showGallery, newPhotos: false }));
+    this.setState((state) => ({ showGallery: !state.showGallery, newPhotos: false }));
 
-  toggleMoreOptions = () => this.setState(state => ({ showMoreOptions: !state.showMoreOptions }));
+  toggleMoreOptions = () => this.setState((state) => ({ showMoreOptions: !state.showMoreOptions }));
 
   toggleFacing = () =>
-    this.setState(state => ({
+    this.setState((state) => ({
       type: state.type === CameraType.back ? CameraType.front : CameraType.back,
     }));
 
-  toggleFlash = () => this.setState(state => ({ flash: flashModeOrder[state.flash] }));
+  toggleFlash = () => this.setState((state) => ({ flash: flashModeOrder[state.flash] }));
 
   setRatio = (ratio: string) => this.setState({ ratio });
 
-  toggleWB = () => this.setState(state => ({ whiteBalance: wbOrder[state.whiteBalance] }));
+  toggleWB = () => this.setState((state) => ({ whiteBalance: wbOrder[state.whiteBalance] }));
 
   toggleFocus = () =>
-    this.setState(state => ({ autoFocus: state.autoFocus === 'on' ? 'off' : 'on' }));
+    this.setState((state) => ({ autoFocus: state.autoFocus === 'on' ? 'off' : 'on' }));
 
-  zoomOut = () => this.setState(state => ({ zoom: state.zoom - 0.1 < 0 ? 0 : state.zoom - 0.1 }));
+  zoomOut = () => this.setState((state) => ({ zoom: state.zoom - 0.1 < 0 ? 0 : state.zoom - 0.1 }));
 
-  zoomIn = () => this.setState(state => ({ zoom: state.zoom + 0.1 > 1 ? 1 : state.zoom + 0.1 }));
+  zoomIn = () => this.setState((state) => ({ zoom: state.zoom + 0.1 > 1 ? 1 : state.zoom + 0.1 }));
 
   setFocusDepth = (depth: number) => this.setState({ depth });
 
   toggleBarcodeScanning = () =>
-    this.setState(state => ({ barcodeScanning: !state.barcodeScanning }));
+    this.setState((state) => ({ barcodeScanning: !state.barcodeScanning }));
 
-  toggleFaceDetection = () => this.setState(state => ({ faceDetecting: !state.faceDetecting }));
+  toggleFaceDetection = () => this.setState((state) => ({ faceDetecting: !state.faceDetecting }));
 
   takePicture = () => {
     if (this.camera) {
@@ -182,7 +189,7 @@ export default class CameraScreen extends React.Component<{}, State> {
   onBarCodeScanned = (code: BarCodeScanningResult) => {
     console.log('Found: ', code);
     this.setState(
-      state => ({ barcodeScanning: !state.barcodeScanning }),
+      (state) => ({ barcodeScanning: !state.barcodeScanning }),
       () => Alert.alert(`Barcode found: ${code.data}`)
     );
   };
@@ -208,7 +215,7 @@ export default class CameraScreen extends React.Component<{}, State> {
   nextPictureSize = () => this.changePictureSize(-1);
 
   changePictureSize = (direction: number) => {
-    this.setState(state => {
+    this.setState((state) => {
       let newId = state.pictureSizeId + direction;
       const length = state.pictureSizes.length;
       if (newId >= length) {
@@ -224,7 +231,7 @@ export default class CameraScreen extends React.Component<{}, State> {
   };
 
   renderGallery() {
-    const localPhotos = photos.map(photo => photo.uri);
+    const localPhotos = photos.map((photo) => photo.uri);
     return <GalleryScreen onPress={this.toggleView} photos={localPhotos} />;
   }
 
@@ -336,14 +343,14 @@ export default class CameraScreen extends React.Component<{}, State> {
   renderCamera = () => (
     <View style={{ flex: 1 }}>
       <Camera
-        ref={ref => (this.camera = ref!)}
+        ref={(ref) => (this.camera = ref!)}
         style={styles.camera}
         onCameraReady={this.collectPictureSizes}
         type={this.state.type}
-        flashMode={this.state.flash}
-        autoFocus={this.state.autoFocus}
+        flashMode={FlashMode[this.state.flash]}
+        autoFocus={AutoFocus[this.state.autoFocus]}
         zoom={this.state.zoom}
-        whiteBalance={this.state.whiteBalance}
+        whiteBalance={WhiteBalance[this.state.whiteBalance]}
         ratio={this.state.ratio}
         pictureSize={this.state.pictureSize}
         onMountError={this.handleMountError}

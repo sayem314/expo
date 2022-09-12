@@ -1,9 +1,10 @@
 ---
 title: Lottie
-sourceCodeUrl: 'https://github.com/react-native-community/lottie-react-native'
+sourceCodeUrl: 'https://github.com/lottie-react-native/lottie-react-native'
+packageName: 'lottie-react-native'
 ---
 
-import InstallSection from '~/components/plugins/InstallSection';
+import {APIInstallSection} from '~/components/plugins/InstallSection';
 import PlatformsSection from '~/components/plugins/PlatformsSection';
 import SnackInline from '~/components/plugins/SnackInline';
 
@@ -13,7 +14,7 @@ Expo includes support for [Lottie](https://airbnb.design/lottie/), the animation
 
 ## Installation
 
-<InstallSection packageName="lottie-react-native" href="https://github.com/react-native-community/lottie-react-native" />
+<APIInstallSection href="https://github.com/lottie-react-native/lottie-react-native" />
 
 ## Usage
 
@@ -86,4 +87,4 @@ const styles = StyleSheet.create({
 import LottieView from 'lottie-react-native';
 ```
 
-Refer to the [lottie-react-native repository](https://github.com/airbnb/lottie-react-native#usage) for more detailed documentation.
+Refer to the [lottie-react-native repository](https://github.com/lottie-react-native/lottie-react-native#usage) for more detailed documentation.

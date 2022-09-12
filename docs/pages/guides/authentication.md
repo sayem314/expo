@@ -34,7 +34,7 @@ If you'd like to see more, you can [open a PR](https://github.com/expo/expo/edit
   <SocialGridItem title="Facebook" protocol={['OAuth 2']} href="#facebook" image="/static/images/sdk/auth-session/facebook.png" />
   <SocialGridItem title="Fitbit" protocol={['OAuth 2']} href="#fitbit" image="/static/images/sdk/auth-session/fitbit.png" />
   <SocialGridItem title="Firebase Phone" protocol={['Recaptcha']} href="/versions/latest/sdk/firebase-recaptcha" image="/static/images/sdk/auth-session/firebase-phone.png" />
-  <SocialGridItem title="Github" protocol={['OAuth 2']} href="#github" image="/static/images/sdk/auth-session/github.png" />
+  <SocialGridItem title="GitHub" protocol={['OAuth 2']} href="#github" image="/static/images/sdk/auth-session/github.png" />
   <SocialGridItem title="Google" protocol={['OAuth 2', 'OpenID']} href="#google" image="/static/images/sdk/auth-session/google.png" />
   <SocialGridItem title="Imgur" protocol={['OAuth 2']} href="#imgur" image="/static/images/sdk/auth-session/imgur.png" />
   <SocialGridItem title="Okta" protocol={['OAuth 2', 'OpenID']} href="#okta" image="/static/images/sdk/auth-session/okta.png" />
@@ -43,6 +43,7 @@ If you'd like to see more, you can [open a PR](https://github.com/expo/expo/edit
   <SocialGridItem title="Spotify" protocol={['OAuth 2']} href="#spotify" image="/static/images/sdk/auth-session/spotify.png" />
   <SocialGridItem title="Strava" protocol={['OAuth 2']} href="#strava" image="/static/images/sdk/auth-session/strava.png" />
   <SocialGridItem title="Twitch" protocol={['OAuth 2']} href="#twitch" image="/static/images/sdk/auth-session/twitch.png" />
+  <SocialGridItem title="Twitter" protocol={['OAuth 2']} href="#twitter" image="/static/images/sdk/auth-session/twitter.png" />
   <SocialGridItem title="Uber" protocol={['OAuth 2']} href="#uber" image="/static/images/sdk/auth-session/uber.png" />
 </SocialGrid>
 
@@ -542,8 +543,8 @@ You must use the proxy service in the Expo Go app because `exp://` cannot be add
 Consider using the [`expo-facebook`](/versions/latest/sdk/facebook) module for native auth as it supports some nonstandard OAuth features implemented by Facebook.
 
 - The custom scheme provided by Facebook is `fb` followed by the **project ID** (ex: `fb145668956753819`):
-- Add `facebookScheme: 'fb<YOUR FBID>'` to your `app.config.js` or `app.json`. Example: `{ facebookScheme: "fb145668956753819" }` (notice the `fb` prefix).
-- You'll need to make a new native build to add this redirect URI into your app's `AndroidManifest.xml` and `Info.plist`:
+- Add `facebookScheme: 'fb<YOUR FBID>'` to your **app.config.js** or **app.json**. Example: `{ facebookScheme: "fb145668956753819" }` (notice the `fb` prefix).
+- You'll need to make a new native build to add this redirect URI into your app's **AndroidManifest.xml** and **Info.plist**:
   - iOS: `eas build` or `expo build:ios`.
   - Android: `eas build` or `expo build:android`.
 - **Bare:**
@@ -557,7 +558,7 @@ Consider using the [`expo-facebook`](/versions/latest/sdk/facebook) module for n
 
 <img alt="Facebook Console for URIs" src="/static/images/sdk/auth-session/guide/facebook-ios-guide.png" />
 
-- Under iOS > Bundle ID: Add your app's bundle identifier, this should match the value in your `app.json` - `expo.ios.bundleIdentifier`. If you don't have one set, run `expo eject` to create one (then rebuild the native app).
+- Under iOS > Bundle ID: Add your app's bundle identifier, this should match the value in your **app.json** - `expo.ios.bundleIdentifier`. If you don't have one set, run `expo eject` to create one (then rebuild the native app).
 - Press "Save Changes" in the footer.
 - Copy the "App ID" in the header into your `iosClientId: '<YOUR FBID>'` or `clientId`. Ex: `{ iosClientId: '474614477183384' }` (no `fb` prefix).
 - Now you're ready to use the demo component in your native iOS app.
@@ -569,7 +570,7 @@ Consider using the [`expo-facebook`](/versions/latest/sdk/facebook) module for n
 
 <img alt="Facebook Console for URIs" src="/static/images/sdk/auth-session/guide/facebook-android-guide.png" />
 
-- Under Android > Google Play Package Name: Add your app's android package, this should match the value in your `app.json` - `expo.android.package`. If you don't have one set, run `expo eject` to create one (then rebuild the native app).
+- Under Android > Google Play Package Name: Add your app's android package, this should match the value in your **app.json** - `expo.android.package`. If you don't have one set, run `expo eject` to create one (then rebuild the native app).
 - Under Android > Class Name: This should match the package name + `.MainActivity`, i.e. `com.bacon.yolo15.MainActivity`.
 - Under Android > Key Hashes: You'll need to create two different values, one for Debug and one for Release. Learn how to create the [Key Hash here](https://stackoverflow.com/questions/4388992/key-hash-for-android-facebook-app).
   - In your app root, run: `keytool -exportcert -alias androiddebugkey -keystore android/app/debug.keystore | openssl sha1 -binary | openssl base64` you don't need a password, but it is recommended.
@@ -581,7 +582,7 @@ Consider using the [`expo-facebook`](/versions/latest/sdk/facebook) module for n
 
 If the App crashes upon authentication, then run `adb logcat` and look for any runtime Errors.
 
-If the Android app crashes with `Didn't find class "com.facebook.CustomTabActivity" on ...` then you may need to remove the native Facebook code for `expo-facebook` from the `AndroidManifest.xml`:
+If the Android app crashes with `Didn't find class "com.facebook.CustomTabActivity" on ...` then you may need to remove the native Facebook code for `expo-facebook` from the **AndroidManifest.xml**:
 
 ```diff
 -    <activity android:name="com.facebook.CustomTabActivity" android:exported="true">
@@ -726,15 +727,14 @@ import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import * as Facebook from 'expo-auth-session/providers/facebook';
 import { ResponseType } from 'expo-auth-session';
-import firebase from 'firebase';
+import { initializeApp } from 'firebase/app';
+import { getAuth, FacebookAuthProvider, signInWithCredential } from 'firebase/auth';
 import { Button } from 'react-native';
 
 // Initialize Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp({
-    /* Config */
-  });
-}
+initializeApp({
+  /* Config */
+});
 
 /* @info <strong>Web only:</strong> This method should be invoked on the page that the auth popup gets redirected to on web, it'll ensure that authentication is completed properly. On native this does nothing. */
 WebBrowser.maybeCompleteAuthSession();
@@ -755,10 +755,12 @@ export default function App() {
       /* @end */
 
       /* @info Create a Facebook credential with the <code>access_token</code> */
-      const credential = firebase.auth.FacebookAuthProvider.credential(access_token);
+      const auth = getAuth();
+      const provider = new FacebookAuthProvider();
+      const credential = provider.credential(access_token);
       /* @end */
       // Sign in with the credential from the Facebook user.
-      firebase.auth().signInWithCredential(credential);
+      signInWithCredential(auth, credential);
     }
   }, [response]);
 
@@ -944,7 +946,7 @@ export default function App() {
 
 ### GitHub
 
-<CreateAppButton name="Github" href="https://github.com/settings/developers" />
+<CreateAppButton name="GitHub" href="https://github.com/settings/developers" />
 
 | Website                     | Provider  | PKCE      | Auto Discovery |
 | --------------------------- | --------- | --------- | -------------- |
@@ -1027,13 +1029,13 @@ export default function App() {
 
 <Tab>
 
-- Implicit grant is [not supported for Github](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/).
+- Implicit grant is [not supported for GitHub](https://developer.github.com/apps/building-oauth-apps/authorizing-oauth-apps/).
 
 </Tab>
 
 </Tabs>
 
-<!-- End Github -->
+<!-- End GitHub -->
 
 ### Google
 
@@ -1080,15 +1082,15 @@ This can only be used in standalone and bare workflow apps. This method cannot b
 
 - **Application Type**: iOS Application
 - Give it a name (e.g. "iOS App").
-- **Bundle ID**: Must match the value of `ios.bundleIdentifier` in your `app.json`.
+- **Bundle ID**: Must match the value of `ios.bundleIdentifier` in your **app.json**.
 - Your app needs to conform to the URI scheme matching your bundle identifier.
   - _Standalone_: Automatically added, do nothing.
   - _Bare workflow_: Run `npx uri-scheme add <your bundle id> --ios`
 - To test this you can:
   1. Eject to bare: `expo eject` and run `yarn ios`
-  2. Build a simulator app: `expo build:ios -t simulator`
-  3. Build a production IPA: `expo build:ios`
-- Whenever you change the values in `app.json` you'll need to rebuild the native app.
+  2. Build a simulator app: `expo build:ios -t simulator` on `eas build`
+  3. Build a production IPA: `expo build:ios` or `eas build`
+- Whenever you change the values in **app.json** you'll need to rebuild the native app.
 
 **Troubleshooting**
 
@@ -1102,7 +1104,7 @@ This can only be used in Standalone, and bare workflow apps. This method cannot 
 
 - **Application Type**: Android Application
 - Give it a name (e.g. "Android App").
-- **Package name**: Must match the value of `android.package` in your `app.json`.
+- **Package name**: Must match the value of `android.package` in your **app.json**.
 - Your app needs to conform to the URI scheme matching your `android.package` (ex. `com.myname.mycoolapp:/`).
   - _Standalone_: Automatically added, do nothing.
   - _Bare workflow_: Run `npx uri-scheme add <your android.package> --android`
@@ -1110,9 +1112,9 @@ This can only be used in Standalone, and bare workflow apps. This method cannot 
   - Run `expo credentials:manager -p android` then select "Update upload Keystore" -> "Generate new keystore" -> "Go back to experience overview"
   - Copy your "Google Certificate Fingerprint", it will output a string that looks like `A1:B2:C3` but longer.
 - To test this you can:
-  1. Eject to bare: `expo eject` and run `yarn ios`
-  2. Build a production IPA: `expo build:android`
-- Whenever you change the values in `app.json` you'll need to rebuild the native app.
+  1. Eject to bare: `expo eject` and run `yarn android`
+  2. Build a production APK: `expo build:android`
+- Whenever you change the values in **app.json** you'll need to rebuild the native app.
 
 #### Web Apps
 
@@ -1186,7 +1188,7 @@ export default function App() {
   - Save "Web client ID" you'll need it later
   - Press Save
 - Replace `YOUR_GUID` with your "Web client ID" and open this link:
-  - https://console.developers.google.com/apis/credentials/oauthclient/YOUR_GUID.apps.googleusercontent.com
+  - https://console.developers.google.com/apis/credentials/oauthclient/YOUR_GUID
 - Under "URIs" add your hosts URLs
   - Web dev: https://localhost:19006
   - Expo Go Proxy: https://auth.expo.io
@@ -1204,15 +1206,14 @@ import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
 import { ResponseType } from 'expo-auth-session';
 import * as Google from 'expo-auth-session/providers/google';
-import firebase from 'firebase';
+import { initializeApp } from 'firebase/app';
+import { getAuth, GoogleAuthProvider, signInWithCredential } from 'firebase/auth';
 import { Button } from 'react-native';
 
 // Initialize Firebase
-if (!firebase.apps.length) {
-  firebase.initializeApp({
-    /* Config */
-  });
-}
+initializeApp({
+  /* Config */
+});
 
 /* @info <strong>Web only:</strong> This method should be invoked on the page that the auth popup gets redirected to on web, it'll ensure that authentication is completed properly. On native this does nothing. */
 WebBrowser.maybeCompleteAuthSession();
@@ -1235,9 +1236,11 @@ export default function App() {
       /* @end */
 
       /* @info Create a Google credential with the <code>id_token</code> */
-      const credential = firebase.auth.GoogleAuthProvider.credential(id_token);
+      const auth = getAuth();
+      const provider = new GoogleAuthProvider();
+      const credential = provider.credential(id_token);
       /* @end */
-      firebase.auth().signInWithCredential(credential);
+      signInWithCredential(auth, credential);
     }
   }, [response]);
 
@@ -2159,6 +2162,105 @@ export default function App() {
 
 <!-- End Twitch -->
 
+### Twitter
+
+<CreateAppButton name="Twitter" href="https://developer.twitter.com/en/portal/projects/new" />
+
+| Website                      | Provider | PKCE      | Auto Discovery | Scopes            |
+| ---------------------------- | -------- | --------- | -------------- | ----------------- |
+| [Get your Config][c-twitter] | OAuth    | Supported | Not Available  | [Info][s-twitter] |
+
+[c-twitter]: https://developer.twitter.com/en/portal/projects/new
+[s-twitter]: https://developer.twitter.com/en/docs/authentication/oauth-2-0/authorization-code
+
+- You will need to be approved by Twitter support before you can use the Twitter v2 API.
+- Web does not appear to work, the Twitter authentication website appears to block the popup, causing the `response` of `useAuthRequest` to always be `{type: 'dismiss'}`.
+- Example redirects:
+  - Expo Go + Proxy: `https://auth.expo.io/@you/your-app`
+  - Standalone or Bare: `com.your.app://`
+  - Web (dev `expo start --https`): `https://localhost:19006` (no ending slash)
+- The `redirectUri` requires 2 slashes (`://`).
+
+#### Expo Go
+
+You must use the proxy service in the Expo Go app because `exp://localhost:19000` cannot be added to your Twitter app as a redirect.
+
+<Tabs tabs={["Auth Code"]}>
+
+<Tab>
+
+<SnackInline label='Twitter Auth Code' dependencies={['expo-auth-session', 'expo-random', 'expo-web-browser']}>
+
+<!-- prettier-ignore -->
+```tsx
+import * as React from 'react';
+import * as WebBrowser from 'expo-web-browser';
+import { makeRedirectUri, useAuthRequest } from 'expo-auth-session';
+import { Button, Platform } from 'react-native';
+
+const useProxy = Platform.select({ web: false, default: true });
+
+/* @info <strong>Web only:</strong> This method should be invoked on the page that the auth popup gets redirected to on web, it'll ensure that authentication is completed properly. On native this does nothing. */
+WebBrowser.maybeCompleteAuthSession();
+/* @end */
+
+// Endpoint
+const discovery = {
+  authorizationEndpoint: "https://twitter.com/i/oauth2/authorize",
+  tokenEndpoint: "https://twitter.com/i/oauth2/token",
+  revocationEndpoint: "https://twitter.com/i/oauth2/revoke",
+};
+
+export default function App() {
+  const [request, response, promptAsync] = useAuthRequest(
+    {
+      clientId: 'CLIENT_ID',
+      redirectUri: makeRedirectUri({
+        /* @info The URI <code>[scheme]://</code> to be used in bare and standalone. If undefined, the <code>scheme</code> property of your app.json or app.config.js will be used instead. */
+        scheme: 'your.app',
+        /* @end */
+        useProxy
+      }),
+      usePKCE: true,
+      scopes: [
+        "tweet.read",
+      ],
+    },
+    discovery
+  );
+
+  React.useEffect(() => {
+    if (response?.type === 'success') {
+      /* @info Exchange the code for an access token in a server. Alternatively you can use the <b>Implicit</b> auth method. */
+      const { code } = response.params;
+      /* @end */
+    }
+  }, [response]);
+
+  return (
+    <Button
+      /* @info Disable the button until the request is loaded asynchronously. */
+      disabled={!request}
+      /* @end */
+      title="Login"
+      onPress={() => {
+        /* @info Prompt the user to authenticate in a user interaction or web browsers will block it. */
+        promptAsync({ useProxy });
+        /* @end */
+      }}
+    />
+  );
+}
+```
+
+</SnackInline>
+
+</Tab>
+
+</Tabs>
+
+<!-- End Twitter -->
+
 ### Uber
 
 <CreateAppButton name="Uber" href="https://developer.uber.com/docs/riders/guides/authentication/introduction" />
@@ -2352,6 +2454,7 @@ Here are a few examples of some common redirect URI patterns you may end up usin
 In some cases there will be anywhere between 1 to 3 slashes (`/`).
 
 - **Environment:**
+
   - Bare workflow
     - `npx create-react-native-app` or `expo eject`
   - Standalone builds in the App or Play Store
@@ -2411,7 +2514,7 @@ Here is an example of logging into Spotify without using a client secret.
 ```tsx
 import * as React from 'react';
 import * as WebBrowser from 'expo-web-browser';
-import { useAuthRequest, ResponseType } from 'expo-auth-session';
+import { makeRedirectUri, useAuthRequest, ResponseType } from 'expo-auth-session';
 
 /* @info <strong>Web only:</strong> This method should be invoked on the page that the auth popup gets redirected to on web, it'll ensure that authentication is completed properly. On native this does nothing. */
 WebBrowser.maybeCompleteAuthSession();

@@ -1,11 +1,11 @@
 {
+  "extends": "@tsconfig/node12/tsconfig.json",
   "include": ["./src"],
+  "exclude": ["**/__mocks__/*", "**/__tests__/*"],
   "compilerOptions": {
     "outDir": "./build",
-    "target": "esnext",
     "module": "commonjs",
     "moduleResolution": "node",
-    "strict": true,
     "types": [],
     "typeRoots": ["./ts-declarations", "node_modules/@types"],
     "sourceMap": true,
@@ -17,7 +17,6 @@
     "skipLibCheck": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
-    "esModuleInterop": true,
     "allowSyntheticDefaultImports": true
   }
 }

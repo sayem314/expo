@@ -16,45 +16,57 @@
 
 @implementation EXUpdatesModule
 
-UM_EXPORT_MODULE(ExpoUpdates);
+EX_EXPORT_MODULE(ExpoUpdates);
 
-- (void)setModuleRegistry:(UMModuleRegistry *)moduleRegistry
+- (void)setModuleRegistry:(EXModuleRegistry *)moduleRegistry
 {
   _updatesService = [moduleRegistry getModuleImplementingProtocol:@protocol(EXUpdatesModuleInterface)];
 }
 
 - (NSDictionary *)constantsToExport
 {
+  NSString *releaseChannel = _updatesService.config.releaseChannel;
+  NSString *channel = _updatesService.config.requestHeaders[@"expo-channel-name"] ?: @"";
+  NSString *runtimeVersion = _updatesService.config.runtimeVersion ?: @"";
+  NSNumber *isMissingRuntimeVersion = @(_updatesService.config.isMissingRuntimeVersion);
+  
   if (!_updatesService.isStarted) {
     return @{
       @"isEnabled": @(NO),
-      @"isMissingRuntimeVersion": @(_updatesService.config.isMissingRuntimeVersion)
+      @"isMissingRuntimeVersion": isMissingRuntimeVersion,
+      @"releaseChannel": releaseChannel,
+      @"runtimeVersion": runtimeVersion,
+      @"channel": channel
     };
   }
   EXUpdatesUpdate *launchedUpdate = _updatesService.launchedUpdate;
   if (!launchedUpdate) {
     return @{
       @"isEnabled": @(NO),
-      @"isMissingRuntimeVersion": @(_updatesService.config.isMissingRuntimeVersion)
-    };
-  } else {
-    return @{
-      @"isEnabled": @(YES),
-      @"isUsingEmbeddedAssets": @(_updatesService.isUsingEmbeddedAssets),
-      @"updateId": launchedUpdate.updateId.UUIDString ?: @"",
-      @"manifest": launchedUpdate.rawManifest.rawManifestJSON ?: @{},
-      @"releaseChannel": _updatesService.config.releaseChannel,
-      @"localAssets": _updatesService.assetFilesMap ?: @{},
-      @"isEmergencyLaunch": @(_updatesService.isEmergencyLaunch),
-      @"isMissingRuntimeVersion": @(_updatesService.config.isMissingRuntimeVersion)
+      @"isMissingRuntimeVersion": isMissingRuntimeVersion,
+      @"releaseChannel": releaseChannel,
+      @"runtimeVersion": runtimeVersion,
+      @"channel": channel
     };
   }
   
+  return @{
+    @"isEnabled": @(YES),
+    @"isUsingEmbeddedAssets": @(_updatesService.isUsingEmbeddedAssets),
+    @"updateId": launchedUpdate.updateId.UUIDString ?: @"",
+    @"manifest": launchedUpdate.manifest.rawManifestJSON ?: @{},
+    @"localAssets": _updatesService.assetFilesMap ?: @{},
+    @"isEmergencyLaunch": @(_updatesService.isEmergencyLaunch),
+    @"isMissingRuntimeVersion": isMissingRuntimeVersion,
+    @"releaseChannel": releaseChannel,
+    @"runtimeVersion": runtimeVersion,
+    @"channel": channel
+  };
 }
 
-UM_EXPORT_METHOD_AS(reload,
-                    reloadAsync:(UMPromiseResolveBlock)resolve
-                         reject:(UMPromiseRejectBlock)reject)
+EX_EXPORT_METHOD_AS(reload,
+                    reloadAsync:(EXPromiseResolveBlock)resolve
+                         reject:(EXPromiseRejectBlock)reject)
 {
   if (!_updatesService.config.isEnabled) {
     reject(@"ERR_UPDATES_DISABLED", @"You cannot reload when expo-updates is not enabled.", nil);
@@ -74,9 +86,9 @@ UM_EXPORT_METHOD_AS(reload,
   }];
 }
 
-UM_EXPORT_METHOD_AS(checkForUpdateAsync,
-                    checkForUpdateAsync:(UMPromiseResolveBlock)resolve
-                                 reject:(UMPromiseRejectBlock)reject)
+EX_EXPORT_METHOD_AS(checkForUpdateAsync,
+                    checkForUpdateAsync:(EXPromiseResolveBlock)resolve
+                                 reject:(EXPromiseRejectBlock)reject)
 {
   if (!_updatesService.config.isEnabled) {
     reject(@"ERR_UPDATES_DISABLED", @"You cannot check for updates when expo-updates is not enabled.", nil);
@@ -106,21 +118,21 @@ UM_EXPORT_METHOD_AS(checkForUpdateAsync,
     if ([selectionPolicy shouldLoadNewUpdate:update withLaunchedUpdate:launchedUpdate filters:update.manifestFilters]) {
       resolve(@{
         @"isAvailable": @(YES),
-        @"manifest": update.rawManifest.rawManifestJSON
+        @"manifest": update.manifest.rawManifestJSON
       });
     } else {
       resolve(@{
         @"isAvailable": @(NO)
       });
     }
-  } errorBlock:^(NSError *error, NSURLResponse *response) {
+  } errorBlock:^(NSError *error) {
     reject(@"ERR_UPDATES_CHECK", error.localizedDescription, error);
   }];
 }
 
-UM_EXPORT_METHOD_AS(fetchUpdateAsync,
-                    fetchUpdateAsync:(UMPromiseResolveBlock)resolve
-                              reject:(UMPromiseRejectBlock)reject)
+EX_EXPORT_METHOD_AS(fetchUpdateAsync,
+                    fetchUpdateAsync:(EXPromiseResolveBlock)resolve
+                              reject:(EXPromiseRejectBlock)reject)
 {
   if (!_updatesService.config.isEnabled) {
     reject(@"ERR_UPDATES_DISABLED", @"You cannot fetch updates when expo-updates is not enabled.", nil);
@@ -141,7 +153,7 @@ UM_EXPORT_METHOD_AS(fetchUpdateAsync,
       [self->_updatesService resetSelectionPolicy];
       resolve(@{
         @"isNew": @(YES),
-        @"manifest": update.rawManifest.rawManifestJSON
+        @"manifest": update.manifest.rawManifestJSON
       });
     } else {
       resolve(@{

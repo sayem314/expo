@@ -8,7 +8,83 @@
 
 ### 🐛 Bug fixes
 
+### 💡 Others
+
+## 13.2.1 — 2022-01-20
+
+### 🐛 Bug fixes
+
+- Fix build errors on React Native 0.66 caused by `okio` and `okhttp`. ([#15632](https://github.com/expo/expo/pull/15632) by [@kudo](https://github.com/kudo))
+
+## 13.2.0 — 2021-12-22
+
+### 🐛 Bug fixes
+
+- Fixed runtime crash due to `.toUpperCase` not being invoked as a function, it was missing `()`. ([#15615](https://github.com/expo/expo/pull/15615) by [@lukebrandonfarrell](https://github.com/lukebrandonfarrell))
+- Fixed `totalByteSent` in upload progress callback incorrectly sending `bytesSent` on iOS. ([#15615](https://github.com/expo/expo/pull/15615) by [@lukebrandonfarrell](https://github.com/lukebrandonfarrell))
+- Fixed simulator runtime crash on arm64 devices caused by `CFRelease(NULL)`. ([#15496](https://github.com/expo/expo/pull/15496) by [@daxaxelrod](https://github.com/daxaxelrod))
+
+### 💡 Others
+
+- Updated `@expo/config-plugins` from `4.0.2` to `4.0.14` ([#15621](https://github.com/expo/expo/pull/15621) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 13.1.2 — 2022-01-22
+
+### 🐛 Bug fixes
+
+- Fixed runtime crash due to `.toUpperCase` not being invoked as a function, it was missing `()`. ([#15615](https://github.com/expo/expo/pull/15615) by [@lukebrandonfarrell](https://github.com/lukebrandonfarrell))
+- Fixed `totalByteSent` in upload progress callback incorrectly sending `bytesSent` on iOS. ([#15615](https://github.com/expo/expo/pull/15615) by [@lukebrandonfarrell](https://github.com/lukebrandonfarrell))
+- Fixed simulator runtime crash on arm64 devices caused by `CFRelease(NULL)`. ([#15496](https://github.com/expo/expo/pull/15496) by [@daxaxelrod](https://github.com/daxaxelrod))
+
+## 13.1.1 — 2022-01-20
+
+### 🐛 Bug fixes
+
+- Fix build errors on React Native 0.66 caused by `okio` and `okhttp`. ([#15632](https://github.com/expo/expo/pull/15632) by [@kudo](https://github.com/kudo))
+
+## 13.1.0 — 2021-11-17
+
+### 🐛 Bug fixes
+
+- Fixed `uploadAsync` failing to resolve when using `BINARY_CONTENT`. ([#14764](https://github.com/expo/expo/pull/14764) by [@cruzach](https://github.com/cruzach))
+- Fix `okio` library build error for `react-native@0.65` or above. ([#14761](https://github.com/expo/expo/pull/14761) by [@kudo](https://github.com/kudo))
+
+## 13.0.1 — 2021-10-01
+
+_This version does not introduce any user-facing changes._
+
+## 13.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🐛 Bug fixes
+
+- `getFreeDiskStorageAsync` now correctly reports free disk space on iOS. ([#14279](https://github.com/expo/expo/pull/14279) by [mickmaccallum](https://github.com/mickmaccallum))
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Updated `@expo/config-plugins` ([#14443](https://github.com/expo/expo/pull/14443) by [@EvanBacon](https://github.com/EvanBacon))
+- Rewritten module to Kotlin. ([#14549](https://github.com/expo/expo/pull/14549) by [@mstach60161](https://github.com/mstach60161))
+
+## 12.0.0 — 2021-09-08
+
+### 🛠 Breaking changes
+
+- Added `AndroidManifest.xml` queries for intent handling. ([#13388](https://github.com/expo/expo/pull/13388) by [@EvanBacon](https://github.com/EvanBacon))
+
+### 💡 Others
+
+- Migrated from `@unimodules/core` to `expo-modules-core`. ([#13749](https://github.com/expo/expo/pull/13749) by [@tsapeta](https://github.com/tsapeta))
+
+## 11.1.0 — 2021-06-16
+
+### 🐛 Bug fixes
+
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))
+- Fixed crash of file system when try to read cache dir file on android. ([#12716](https://github.com/expo/expo/pull/13232) by [@nomi9995](https://github.com/nomi9995))
 
 ### 💡 Others
 

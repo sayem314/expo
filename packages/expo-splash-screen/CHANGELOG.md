@@ -6,10 +6,83 @@
 
 ### 🎉 New features
 
+### 🐛 Bug fixes
+
+### 💡 Others
+
+- Updated `@expo/config-plugins` from `4.0.2` to `4.0.14` ([#15621](https://github.com/expo/expo/pull/15621) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 0.14.1 — 2021-12-22
+
+### 🐛 Bug fixes
+
+- Remove duplicated `expo-modules-autolinking` package coming from `expo-splash-screen` dependencies. ([#15685](https://github.com/expo/expo/pull/15685) by [@kudo](https://github.com/kudo))
+
+## 0.14.0 — 2021-12-03
+
+### 🐛 Bug fixes
+
+- Fix `Cannot remove an observer <EXSplashScreenService> for the key path "rootViewController"` exception if applcation keyWindow changed. ([#14982](https://github.com/expo/expo/pull/14982) by [@kudo](https://github.com/kudo))
+
+## 0.13.4 — 2021-10-22
+
+_This version does not introduce any user-facing changes._
+
+## 0.13.3 — 2021-10-15
+
+### 🐛 Bug fixes
+
+- Fix `No native splash screen registered for given view controller` error happening when project is using both `expo-dev-client` and `expo-splash-screen` packages. ([#14745](https://github.com/expo/expo/pull/14745) by [@kudo](https://github.com/kudo))
+
+## 0.13.2 — 2021-10-15
+
+_This version does not introduce any user-facing changes._
+
+## 0.13.1 — 2021-10-01
+
+### 🐛 Bug fixes
+
+- Fix expo-screen-orientation breaking for expo-updates + expo-splash-screen integration. ([#14519](https://github.com/expo/expo/pull/14519) by [@kudo](https://github.com/kudo))
+
+## 0.13.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🐛 Bug fixes
+
+- Fix 'No native splash screen registered' warning from reloading apps. ([#14467](https://github.com/expo/expo/pull/14467) by [@kudo](https://github.com/kudo))
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Updated `@expo/configure-splash-screen`, `@expo/prebuild-config` ([#14443](https://github.com/expo/expo/pull/14443) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 0.12.0 — 2021-09-09
+
+### 🎉 New features
+
+- Add warning for splash screen if visible for too long ([#12882](https://github.com/expo/expo/pull/12882) by [@ajsmth](https://github.com/ajsmth))
+- Show splash screen without additional setup in MainActivity and could customize resizeMode/statusBarTranslucent in resource. See PR description for changes migration. ([#14061](https://github.com/expo/expo/pull/14061) by [@kudo](https://github.com/kudo))
+- Re-show splash screen if rootViewController be replaced when splash is showing. ([#14063](https://github.com/expo/expo/pull/14063) by [@kudo](https://github.com/kudo))
+
+### 🐛 Bug fixes
+
+- On iOS, search for a view controller with a RCTRootView rather than always using the keyWindow's rootViewController. ([#13429](https://github.com/expo/expo/pull/13429) by [@esamelson](https://github.com/esamelson))
+- Fix splash screen not dismissed if there is alert view appearing. ([#14208](https://github.com/expo/expo/pull/14208) by [@kudo](https://github.com/kudo))
+- Fix splash screen not dismissed while alert view appearing before RCTRootView did load. ([#14213](https://github.com/expo/expo/pull/14213) by [@kudo](https://github.com/kudo))
+
+## 0.11.0 — 2021-06-16
+
+### 🎉 New features
+
+- [plugin] Re-export unversioned expo-cli plugin as a versioned plugin. ([#13241](https://github.com/expo/expo/pull/13241) by [@EvanBacon](https://github.com/EvanBacon))
 - Bump `@expo/configure-splash-screen@0.4.0`. ([#12940](https://github.com/expo/expo/pull/12940) by [@EvanBacon](https://github.com/EvanBacon))
 
 ### 🐛 Bug fixes
 
+- [plugin] Match status bar color on android. ([#13227](https://github.com/expo/expo/pull/13227) by [@EvanBacon](https://github.com/EvanBacon))
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))
 
 ### 💡 Others

@@ -1,5 +1,7 @@
 // Copyright 2015-present 650 Industries. All rights reserved.
 
+import Foundation
+
 @objc
 open class DevMenuItem: NSObject {
   @objc(DevMenuItemType)
@@ -19,9 +21,9 @@ open class DevMenuItem: NSObject {
   }
 
   @objc
-  open func serialize() -> [String : Any] {
+  open func serialize() -> [String: Any] {
     return [
-      "type": type.rawValue,
+      "type": type.rawValue
     ]
   }
 }

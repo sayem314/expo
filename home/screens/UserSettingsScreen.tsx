@@ -31,7 +31,7 @@ export default function UserSettingsScreen() {
 
 function AppearanceItem() {
   const dispatch = useDispatch();
-  const preferredAppearance = useSelector(data => data.settings.preferredAppearance);
+  const preferredAppearance = useSelector((data) => data.settings.preferredAppearance);
 
   const onSelectAppearance = React.useCallback(
     (preferredAppearance: ColorSchemeName) => {
@@ -70,7 +70,7 @@ function AppearanceItem() {
 
 function MenuGestureItem() {
   const dispatch = useDispatch();
-  const devMenuSettings = useSelector(data => data.settings.devMenuSettings);
+  const devMenuSettings = useSelector((data) => data.settings.devMenuSettings);
 
   const onToggleMotionGesture = React.useCallback(() => {
     dispatch(
@@ -126,6 +126,7 @@ function TrackingItem() {
       <SectionHeader title="Tracking" />
       <ListItem
         last
+        margins={false}
         title="Allow access to app-related data for tracking"
         onPress={async () => {
           const { status } = await Tracking.requestTrackingPermissionsAsync();

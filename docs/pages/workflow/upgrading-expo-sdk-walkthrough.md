@@ -4,13 +4,25 @@ title: Upgrading Expo SDK
 
 If you are a couple of versions behind, upgrading your projects Expo SDK version can be difficult because of the amount of breaking changes and deprecations in each upgrade. Don't worry, here are all the breaking changes in each SDK version upgrade. We **strongly recommend** upgrading SDK versions incrementally if possible. Doing so will help you pinpoint breakages and issues that arise during the upgrade process.
 
-Expo maintains ~6 months of backwards compatibility. Once an SDK version has been deprecated, you will no longer be able to use the Expo Go app for development or build new binaries via `expo build`. You will still be able to publish OTA updates via `expo publish` however. Deprecations **will not** affect standalone apps you have in production.
+Expo maintains ~6 months of backwards compatibility. Once an SDK version has been deprecated, you will no longer be able to use the Expo Go app for development or build new binaries via `expo build`. You will still be able to publish updates via `expo publish`, and build using `eas build`, however. Deprecations **will not** affect standalone apps you have in production.
 
 > **Note**: If you are running ExpoKit inside a native project, upgrading will require extra steps. ExpoKit is deprecated and will no longer be supported after SDK 38. We recommend [migrating existing ExpoKit projects to the bare workflow](../bare/migrating-from-expokit.md).
 
+## SDK 44
+
+[Blog Post](https://blog.expo.dev/expo-sdk-44-4c4b8306584a)
+
+## SDK 43
+
+[Blog Post](https://blog.expo.dev/expo-sdk-43-aa9b3c7d5541)
+
+## SDK 42
+
+[Blog Post](https://blog.expo.dev/expo-sdk-42-579aee2348b6)
+
 ## SDK 41
 
-[Blog Post](https://blog.expo.io/expo-sdk-41-12cc5232f2ef)
+[Blog Post](https://blog.expo.dev/expo-sdk-41-12cc5232f2ef)
 
 ## SDK 40
 
@@ -30,11 +42,11 @@ Expo maintains ~6 months of backwards compatibility. Once an SDK version has bee
 
 ## SDK 36
 
-[Blog Post](https://blog.expo.io/expo-sdk-36-is-now-available-b91897b437fe)
+[Blog Post](https://blog.expo.dev/expo-sdk-36-is-now-available-b91897b437fe)
 
 ## SDK 35
 
-[Blog Post](https://blog.expo.io/expo-sdk-35-is-now-available-beee0dfafbf4)
+[Blog Post](https://blog.expo.dev/expo-sdk-35-is-now-available-beee0dfafbf4)
 
 #### Upgrade from SDK 34
 
@@ -46,7 +58,7 @@ Expo maintains ~6 months of backwards compatibility. Once an SDK version has bee
 
 ## SDK 34
 
-[Blog Post](https://blog.expo.io/expo-sdk-34-is-now-available-4f7825239319)
+[Blog Post](https://blog.expo.dev/expo-sdk-34-is-now-available-4f7825239319)
 
 #### Upgrade from SDK 33
 
@@ -59,11 +71,11 @@ Expo maintains ~6 months of backwards compatibility. Once an SDK version has bee
 
 ## SDK 33
 
-[Blog Post](https://blog.expo.io/expo-sdk-v33-0-0-is-now-available-52d1c99dfe4c)
+[Blog Post](https://blog.expo.dev/expo-sdk-v33-0-0-is-now-available-52d1c99dfe4c)
 
 #### Upgrade from SDK 32
 
-- `app.json`, change `sdkVersion` to `"33.0.0"`,
+- **app.json**, change `sdkVersion` to `"33.0.0"`,
 - In package.json, change these dependencies:
 
 ```json
@@ -83,11 +95,11 @@ Expo maintains ~6 months of backwards compatibility. Once an SDK version has bee
 
 ## SDK 32
 
-[Blog Post](https://blog.expo.io/expo-sdk-v32-0-0-is-now-available-6b78f92a6c52)
+[Blog Post](https://blog.expo.dev/expo-sdk-v32-0-0-is-now-available-6b78f92a6c52)
 
 #### Upgrade from SDK 31
 
-- `app.json`, change `sdkVersion` to `"32.0.0"`,
+- **app.json**, change `sdkVersion` to `"32.0.0"`,
 - In package.json, change these dependencies:
 
 ```json
@@ -98,10 +110,10 @@ Expo maintains ~6 months of backwards compatibility. Once an SDK version has bee
 }
 ```
 
-- If using the default `.babelrc`, change it to `babel.config.js`:
+- If using the default `.babelrc`, change it to **babel.config.js**:
 
 ```javascript
-module.exports = function(api) {
+module.exports = function (api) {
   api.cache(true);
   return {
     presets: ['babel-preset-expo'],
@@ -117,11 +129,11 @@ module.exports = function(api) {
 
 ## SDK 31
 
-[Blog Post](https://blog.expo.io/expo-sdk-v31-0-0-is-now-available-cad6d0463f49)
+[Blog Post](https://blog.expo.dev/expo-sdk-v31-0-0-is-now-available-cad6d0463f49)
 
 #### Upgrade from SDK 30
 
-- `app.json`, change `sdkVersion` to `"31.0.0"`,
+- **app.json**, change `sdkVersion` to `"31.0.0"`,
 - In package.json, change these dependencies:
 
 ```json
@@ -140,11 +152,11 @@ module.exports = function(api) {
 
 ## SDK 30
 
-[Blog Post](https://blog.expo.io/expo-sdk-30-0-0-is-now-available-e64d8b1db2a7)
+[Blog Post](https://blog.expo.dev/expo-sdk-30-0-0-is-now-available-e64d8b1db2a7)
 
 #### Upgrade from SDK 29
 
-- `app.json`, change `sdkVersion` to `"30.0.0"`,
+- **app.json**, change `sdkVersion` to `"30.0.0"`,
 - In package.json, change these dependencies:
 
 ```json
@@ -163,11 +175,11 @@ module.exports = function(api) {
 
 ## SDK 29
 
-[Blog Post](https://blog.expo.io/expo-sdk-v29-0-0-is-now-available-f001d77fadf)
+[Blog Post](https://blog.expo.dev/expo-sdk-v29-0-0-is-now-available-f001d77fadf)
 
 #### Upgrade from SDK 28
 
-- `app.json`, change `sdkVersion` to `"29.0.0"`,
+- **app.json**, change `sdkVersion` to `"29.0.0"`,
 - In package.json, change these dependencies:
 
 ```json
@@ -186,11 +198,11 @@ module.exports = function(api) {
 
 ## SDK 28
 
-[Blog Post](https://blog.expo.io/expo-sdk-v28-0-0-is-now-available-f30e8253b530)
+[Blog Post](https://blog.expo.dev/expo-sdk-v28-0-0-is-now-available-f30e8253b530)
 
 #### Upgrade from SDK 27
 
-- `app.json`, change `sdkVersion` to `"28.0.0"`,
+- **app.json**, change `sdkVersion` to `"28.0.0"`,
 - In package.json, change these dependencies:
 
 ```json
@@ -205,13 +217,13 @@ module.exports = function(api) {
 
 #### Notes
 
-- Android apps on all SDK versions now require notification channels for push notifications. This may impact you even if you don’t yet use SDK 28. [Read this blog post](https://blog.expo.io/breaking-change-coming-to-android-apps-3116927f0424) for all of the necessary information.
-- Android app icons are now coerced into adaptive icons. Be sure to test your app icon and supply an adaptive icon if needed. [Read this blog post](https://blog.expo.io/adaptive-launcher-icons-coming-to-expo-android-apps-7b9191eea6c1) for all of the necessary information.
+- Android apps on all SDK versions now require notification channels for push notifications. This may impact you even if you don’t yet use SDK 28. [Read this blog post](https://blog.expo.dev/breaking-change-coming-to-android-apps-3116927f0424) for all of the necessary information.
+- Android app icons are now coerced into adaptive icons. Be sure to test your app icon and supply an adaptive icon if needed. [Read this blog post](https://blog.expo.dev/adaptive-launcher-icons-coming-to-expo-android-apps-7b9191eea6c1) for all of the necessary information.
 - Print has been moved out of DangerZone; update your imports accordingly.
 
 ## SDK 27
 
-[Blog Post](https://blog.expo.io/expo-sdk-v27-0-0-is-now-available-898bf1e5b0e4)
+[Blog Post](https://blog.expo.dev/expo-sdk-v27-0-0-is-now-available-898bf1e5b0e4)
 
 #### Upgrade from SDK 26
 
@@ -236,7 +248,7 @@ module.exports = function(api) {
 
 ## SDK 26
 
-[Blog Post](https://blog.expo.io/expo-sdk-v26-0-0-is-now-available-2be6d9805b31)
+[Blog Post](https://blog.expo.dev/expo-sdk-v26-0-0-is-now-available-2be6d9805b31)
 
 #### Upgrade from SDK 25
 
@@ -267,7 +279,7 @@ module.exports = function(api) {
 
 ## SDK 25 [DEPRECATED]
 
-[Blog Post](https://blog.expo.io/expo-sdk-v25-0-0-is-now-available-714d10a8c3f7)
+[Blog Post](https://blog.expo.dev/expo-sdk-v25-0-0-is-now-available-714d10a8c3f7)
 
 #### Upgrade from SDK 24
 
@@ -291,7 +303,7 @@ module.exports = function(api) {
 
 ## SDK 24 [DEPRECATED]
 
-[Blog Post](https://blog.expo.io/expo-sdk-v24-0-0-is-now-available-bfcac3b50d51)
+[Blog Post](https://blog.expo.dev/expo-sdk-v24-0-0-is-now-available-bfcac3b50d51)
 
 #### Upgrade from SDK 23
 
@@ -318,7 +330,7 @@ The following APIs have been removed after being deprecated for a minimum of 2 r
 
 ## SDK 23 [DEPRECATED]
 
-[Blog Post](https://blog.expo.io/expo-sdk-v23-0-0-is-now-available-be0a8c655414)
+[Blog Post](https://blog.expo.dev/expo-sdk-v23-0-0-is-now-available-be0a8c655414)
 
 #### Upgrade from SDK 22
 
@@ -363,7 +375,7 @@ The following APIs have been removed after being deprecated for a minimum of 2 r
 
 ## SDK 22 [DEPRECATED]
 
-[Blog Post](https://blog.expo.io/expo-sdk-v22-0-0-is-now-available-7745bfe97fc6)
+[Blog Post](https://blog.expo.dev/expo-sdk-v22-0-0-is-now-available-7745bfe97fc6)
 
 #### Upgrade from SDK 21
 
@@ -384,7 +396,7 @@ The following APIs have been removed after being deprecated for a minimum of 2 r
 
 Metro Bundler (the default React Native bundler) now errors (instead of silently ignoring) dynamic requires. In particular this breaks an older version of moment.js if you were using that (or indirectly depending on it).
 
-- This is a known issue with Metro [which is being tracked on the project’s Github issues](https://github.com/facebook/metro-bundler/issues/65).
+- This is a known issue with Metro [which is being tracked on the project’s GitHub issues](https://github.com/facebook/metro-bundler/issues/65).
 - If you use moment.js in your app, [you may have success with this fix](https://github.com/facebook/metro-bundler/issues/65#issuecomment-336838866).
 
 Several deprecated APIs have been removed. All of these APIs printed warning messages in previous releases:
@@ -403,7 +415,7 @@ Similarly, if you depend on `React.createClass`, you will need to install the `c
 
 ## SDK 21 [DEPRECATED]
 
-[Blog Post](https://blog.expo.io/expo-sdk-21-0-0-is-now-available-be33b79921b7)
+[Blog Post](https://blog.expo.dev/expo-sdk-21-0-0-is-now-available-be33b79921b7)
 
 #### Upgrade from SDK 20
 

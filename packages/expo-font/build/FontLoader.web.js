@@ -1,4 +1,4 @@
-import { CodedError } from '@unimodules/core';
+import { CodedError } from 'expo-modules-core';
 import ExpoFontLoader from './ExpoFontLoader';
 import { FontDisplay } from './Font';
 function uriFromFontSource(asset) {
@@ -6,7 +6,7 @@ function uriFromFontSource(asset) {
         return asset || null;
     }
     else if (typeof asset === 'object') {
-        return asset.uri || asset.localUri || null;
+        return asset.uri || asset.localUri || asset.default || null;
     }
     return null;
 }

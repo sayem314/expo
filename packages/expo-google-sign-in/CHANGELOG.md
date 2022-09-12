@@ -8,6 +8,38 @@
 
 ### 🐛 Bug fixes
 
+- Added `@expo/config-plugins` dependency ([#15621](https://github.com/expo/expo/pull/15621) by [@EvanBacon](https://github.com/EvanBacon))
+
+### 💡 Others
+
+## 10.1.0 — 2021-12-03
+
+### 💡 Others
+
+- Added deprecation notice for module. ([#15295](https://github.com/expo/expo/pull/15295) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 10.0.1 — 2021-10-01
+
+_This version does not introduce any user-facing changes._
+
+## 10.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🎉 New features
+
+- [plugin] Created expo config plugin to disable arm64 for simulator builds. ([#13989](https://github.com/expo/expo/pull/13989) by [@EvanBacon](https://github.com/EvanBacon))
+
+### 🐛 Bug fixes
+
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+## 9.2.0 — 2021-06-16
+
+### 🐛 Bug fixes
+
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))
 
 ### 💡 Others

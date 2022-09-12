@@ -17,6 +17,8 @@ jobs:
     runs-on: ubuntu-18.04
     steps:
       - uses: actions/checkout@v2
+        with:
+          submodules: true
       - name: Get cache key of git lfs files
         id: git-lfs
         run: echo "::set-output name=sha256::$(git lfs ls-files | openssl dgst -sha256)"
@@ -53,7 +55,7 @@ jobs:
       - name: Install NDK
         if: steps.cache-android-ndk.outputs.cache-hit != 'true'
         run: |
-          sudo $ANDROID_HOME/tools/bin/sdkmanager --install "ndk;19.2.5345600"
+          sudo $ANDROID_SDK_ROOT/tools/bin/sdkmanager --install "ndk;19.2.5345600"
       - name: Build Android packages
         env:
           ANDROID_NDK_HOME: /usr/local/lib/android/sdk/ndk/19.2.5345600/
@@ -95,7 +97,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_ANDROID }}
         with:
-          channel: '#platform-android'
+          channel: '#expo-android'
           status: ${{ job.status }}
           fields: job,message,ref,eventName,author,took
           author_name: Android Shell App (${{ env.SLACK_MESSAGE_DESCRIPTION }})

@@ -23,10 +23,14 @@ type Package = {
 // There are a few packages that we want to exclude from shell app builds; they don't follow any
 // easy pattern so we just keep track of them manually here.
 export const EXCLUDED_PACKAGE_SLUGS = [
+  'expo-dev-client',
+  'expo-dev-launcher',
   'expo-dev-menu',
   'expo-dev-menu-interface',
   'expo-module-template',
   'unimodules-test-core',
+  'unimodules-core',
+  'unimodules-react-native-adapter',
 ];
 
 const EXPO_ROOT_DIR = Directories.getExpoRepositoryRootDir();
@@ -167,7 +171,7 @@ async function _updateExpoViewAsync(packages: Package[], sdkVersion: string): Pr
   );
   const multipleVersionReactNativeActivity = path.join(
     ANDROID_DIR,
-    'expoview/src/main/java/host/exp/exponent/experience/MultipleVersionReactNativeActivity.java'
+    'expoview/src/versioned/java/host/exp/exponent/experience/MultipleVersionReactNativeActivity.java'
   );
 
   // Modify permanently

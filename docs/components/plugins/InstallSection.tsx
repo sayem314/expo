@@ -2,6 +2,7 @@ import { css } from '@emotion/react';
 import { theme } from '@expo/styleguide';
 import * as React from 'react';
 
+import DocumentationPageContext from '../DocumentationPageContext';
 import TerminalBlock from './TerminalBlock';
 
 import * as Constants from '~/constants/theme';
@@ -37,11 +38,14 @@ type Props = {
   href?: string;
 };
 
+const getPackageLink = (packageNames: string) =>
+  `https://github.com/expo/expo/tree/master/packages/${packageNames.split(' ')[0]}`;
+
 const InstallSection: React.FC<Props> = ({
   packageName,
   hideBareInstructions = false,
   cmd = [`expo install ${packageName}`],
-  href = `https://github.com/expo/expo/tree/master/packages/${packageName}`,
+  href = getPackageLink(packageName),
 }) => (
   <div>
     <TerminalBlock cmd={cmd} />
@@ -62,3 +66,8 @@ const InstallSection: React.FC<Props> = ({
 );
 
 export default InstallSection;
+
+export const APIInstallSection: React.FC<Props> = props => {
+  const context = React.useContext(DocumentationPageContext);
+  return <InstallSection {...props} packageName={props.packageName ?? context.packageName} />;
+};

@@ -29,7 +29,7 @@ jobs:
       - name: ⬢ Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: '14.4.0'
+          node-version: '14.17'
       - name: 👀 Checkout
         uses: actions/checkout@v2
         with:
@@ -60,18 +60,20 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_web }}
         with:
-          channel: '#platform-web'
+          channel: '#expo-web'
           status: ${{ job.status }}
           fields: job,message,ref,eventName,author,took
           author_name: Test Suite (Web)
 
   ios:
-    runs-on: macos-10.15
+    runs-on: macos-11
     steps:
       - name: 👀 Checkout
         uses: actions/checkout@v2
         with:
           submodules: true
+      - name: 🔨 Switch to Xcode 13.0
+        run: sudo xcode-select --switch /Applications/Xcode_13.0.app
       - name: 🍺 Install required tools
         run: |
           brew tap wix/brew
@@ -104,8 +106,8 @@ jobs:
         with:
           path: 'apps/bare-expo/ios/Pods'
           key: ${{ runner.os }}-bare-expo-pods-${{ hashFiles('apps/bare-expo/ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-bare-expo-pods-
+          # restore-keys: |
+          #   ${{ runner.os }}-bare-expo-pods-
       - name: 🕵️ Debug CocoaPods lockfiles
         run: git diff Podfile.lock Pods/Manifest.lock
         working-directory: apps/bare-expo/ios
@@ -118,12 +120,11 @@ jobs:
         working-directory: apps/bare-expo/ios
       - name: 🥥 Install pods in apps/bare-expo/ios
         run: pod install
-        if: steps.pods-cache.outputs.cache-hit != 'true' || hashFiles('apps/bare-expo/ios/Podfile.lock') != hashFiles('apps/bare-expo/ios/Pods/Manifest.lock')
         working-directory: apps/bare-expo/ios
-      - name: Clean Detox
+      - name: 🧹 Clean Detox
         run: yarn detox:clean
         working-directory: apps/bare-expo
-      - name: Build iOS project for Detox
+      - name: 🏗️ Build iOS project for Detox
         run: yarn ios:detox:build:release
         working-directory: apps/bare-expo
         timeout-minutes: 30
@@ -143,13 +144,15 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_ios }}
         with:
-          channel: '#platform-ios'
+          channel: '#expo-ios'
           status: ${{ job.status }}
           fields: job,message,ref,eventName,author,took
           author_name: Test Suite (iOS)
 
   android:
-    runs-on: macos-latest
+    runs-on: macos-11
+    env:
+      NDK_ABI_FILTERS: x86_64
     steps:
       - name: 👀 Checkout
         uses: actions/checkout@v2
@@ -178,23 +181,26 @@ jobs:
       - uses: actions/cache@v2
         with:
           path: ~/.gradle/caches
-          key: ${{ runner.os }}-gradle-${{ hashFiles('android/*.gradle*') }}
+          key: ${{ runner.os }}-gradle-v20210625-${{ hashFiles('android/*.gradle*') }}
           restore-keys: |
-            ${{ runner.os }}-gradle-
+            ${{ runner.os }}-gradle-v20210625
       - name: ⚛️ Display React Native config
         run: yarn react-native config
         working-directory: apps/bare-expo
-      - name: Clean Detox
+      - name: 🧹 Clean Detox
         run: yarn detox:clean
         working-directory: apps/bare-expo
-      - name: Build Android project for Detox
+      - name: 🏗️ Build Android project for Detox
         run: yarn android:detox:build:release
         working-directory: apps/bare-expo
         timeout-minutes: 35
+        env:
+          GRADLE_OPTS: '-Dorg.gradle.internal.http.connectionTimeout=180000 -Dorg.gradle.internal.http.socketTimeout=180000 -Dorg.gradle.internal.network.retry.max.attempts=18 -Dorg.gradle.internal.network.retry.initial.backOff=2000'
       - name: Run tests
         uses: reactivecircus/android-emulator-runner@v2
         with:
           api-level: 29
+          arch: x86_64
           avd-name: bare-expo
           script: yarn android:detox:test:release
           working-directory: ./apps/bare-expo
@@ -211,7 +217,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SLACK_WEBHOOK_URL: ${{ secrets.slack_webhook_android }}
         with:
-          channel: '#platform-android'
+          channel: '#expo-android'
           status: ${{ job.status }}
           fields: job,message,ref,eventName,author,took
           author_name: Test Suite (Android)

@@ -2,6 +2,8 @@
 title: Triggering builds from CI
 ---
 
+import { InlineCode } from '~/components/base/code';
+
 This document outlines how to trigger builds on EAS for your app from a CI environment such as GitHub Actions.
 
 Before building with EAS on CI, we need to install and configure `eas-cli`. Then, we can trigger new builds with the `eas build` command.
@@ -14,7 +16,14 @@ To trigger EAS builds from a CI environment, we first need to configure our app 
 
 If you have run `eas build -p [all|ios|android]` successfully before, then you can continue.
 
-If you haven't done this yet, please refer to the ["Creating your first build"](setup.md) guide and return here when you're ready.
+If you haven't done this yet, please refer to the [Creating your first build](setup.md) guide and return here when you're ready.
+
+<details><summary><strong>Are you using the classic build system?</strong> (<InlineCode>expo build:[android|ios]</InlineCode>)</summary> <p>
+
+Learn how to [build standalone apps on your CI with our classic build service](/classic/turtle-cli.md).
+
+</p>
+</details>
 
 ## Configure your app for CI
 
@@ -81,7 +90,7 @@ jobs:
 </p>
 </details>
 
-<details><summary>Gitlab CI</summary>
+<details><summary>GitLab CI</summary>
 <p>
 
 ```yaml
@@ -147,26 +156,17 @@ version: 2.1
 executors:
   default:
     docker:
-      - image: circleci/node:10
+      - image: cimg/node:lts
     working_directory: ~/my-app
-
-commands:
-  attach_project:
-    steps:
-      - attach_workspace:
-          at: ~/my-app
 
 jobs:
   eas_build:
     executor: default
     steps:
       - checkout
-      - attach_project
-
       - run:
           name: Install dependencies
           command: npm ci
-
       - run:
           name: Trigger build
           command: npx eas-cli build --platform all --non-interactive
@@ -207,12 +207,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 10.x
+          node-version: 16.x
 
       - name: Setup Expo
         uses: expo/expo-github-action@v5
         with:
-          expo-version: 3.x
+          expo-version: 4.x
           expo-token: ${{ secrets.EXPO_TOKEN }}
           expo-cache: true
 

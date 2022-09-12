@@ -16,7 +16,10 @@ suspend fun UpdatesInterface.loadUpdate(
 ): UpdatesInterface.Update =
   suspendCoroutine { cont ->
     this.fetchUpdateWithConfiguration(configuration, context, object : UpdatesInterface.UpdateCallback {
-      override fun onSuccess(update: UpdatesInterface.Update) = cont.resume(update)
+      override fun onSuccess(update: UpdatesInterface.Update?) {
+        // if the update is null, we previously aborted the fetch, so we've already resumed
+        update?.let { cont.resume(update) }
+      }
       override fun onFailure(e: Exception?) {
         cont.resumeWithException(e ?: Exception("There was an unexpected error loading the update."))
       }
@@ -37,12 +40,20 @@ suspend fun UpdatesInterface.loadUpdate(
     })
   }
 
-fun createUpdatesConfigurationWithUrl(url: Uri): HashMap<String, Any> {
+fun createUpdatesConfigurationWithUrl(url: Uri, installationID: String?): HashMap<String, Any> {
+  val requestHeaders = hashMapOf(
+    "Expo-Updates-Environment" to "DEVELOPMENT"
+  )
+  if (installationID != null) {
+    requestHeaders["Expo-Dev-Client-ID"] = installationID
+  }
   return hashMapOf(
     "updateUrl" to url,
+    "scopeKey" to url.toString(),
     "hasEmbeddedUpdate" to false,
     "launchWaitMs" to 60000,
     "checkOnLaunch" to "ALWAYS",
-    "enabled" to true
+    "enabled" to true,
+    "requestHeaders" to requestHeaders
   )
 }

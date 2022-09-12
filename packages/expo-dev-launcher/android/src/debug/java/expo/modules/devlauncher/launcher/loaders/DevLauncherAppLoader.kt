@@ -9,7 +9,7 @@ import com.facebook.react.ReactActivity
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.ReactContext
-import expo.modules.devlauncher.DevLauncherController
+import expo.modules.devlauncher.launcher.DevLauncherControllerInterface
 import kotlin.coroutines.Continuation
 import kotlin.coroutines.resume
 import kotlin.coroutines.suspendCoroutine
@@ -35,7 +35,8 @@ import kotlin.coroutines.suspendCoroutine
  */
 abstract class DevLauncherAppLoader(
   private val appHost: ReactNativeHost,
-  private val context: Context
+  private val context: Context,
+  private val controller: DevLauncherControllerInterface
 ) {
   private var continuation: Continuation<Boolean>? = null
   private var reactContextWasInitialized = false
@@ -51,9 +52,7 @@ abstract class DevLauncherAppLoader(
             return
           }
 
-          // App can be started from deep link.
-          // That's why, we maybe need to initialized dev menu here.
-          DevLauncherController.instance.maybeInitDevMenuDelegate(context)
+          controller.onAppLoaded(context)
           onReactContext(context)
           appHost.reactInstanceManager.removeReactInstanceEventListener(this)
           reactContextWasInitialized = true

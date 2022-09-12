@@ -1,19 +1,20 @@
 ---
 title: Random
 sourceCodeUrl: 'https://github.com/expo/expo/tree/master/packages/expo-random'
+packageName: 'expo-random'
 ---
 
 import APISection from '~/components/plugins/APISection';
-import InstallSection from '~/components/plugins/InstallSection';
+import {APIInstallSection} from '~/components/plugins/InstallSection';
 import PlatformsSection from '~/components/plugins/PlatformsSection';
 
-**`expo-random`** provides a native interface for creating strong random bytes. With `Random` you can create values equivalent to `Node.js` core `crypto.randomBytes` API. `expo-random` also works with `expo-standard-web-crypto`, which implements the W3C Crypto API for generating random bytes.
+`expo-random` provides a native interface for creating strong random bytes. With `Random` you can create values equivalent to Node.js core `crypto.randomBytes` API. `expo-random` also works with `expo-standard-web-crypto`, which implements the W3C Crypto API for generating random bytes.
 
 <PlatformsSection android emulator ios simulator web />
 
 ## Installation
 
-<InstallSection packageName="expo-random" />
+<APIInstallSection />
 
 ## API
 

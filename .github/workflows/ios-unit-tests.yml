@@ -7,7 +7,10 @@ on:
       - .github/workflows/ios-unit-tests.yml
       - ios/**
       - packages/**/ios/**
-      - tools/**
+      - tools/src/dynamic-macros/**
+      - tools/src/commands/IosGenerateDynamicMacros.ts
+      - tools/src/commands/IosNativeUnitTests.ts
+      - tools/src/commands/NativeUnitTests.ts
       - secrets/**
       - fastlane/**
       - Gemfile.lock
@@ -18,7 +21,10 @@ on:
       - .github/workflows/ios-unit-tests.yml
       - ios/**
       - packages/**/ios/**
-      - tools/**
+      - tools/src/dynamic-macros/**
+      - tools/src/commands/IosGenerateDynamicMacros.ts
+      - tools/src/commands/IosNativeUnitTests.ts
+      - tools/src/commands/NativeUnitTests.ts
       - secrets/**
       - fastlane/**
       - Gemfile.lock
@@ -30,11 +36,14 @@ concurrency:
 
 jobs:
   build:
-    runs-on: macos-10.15
+    runs-on: macos-11
+    timeout-minutes: 60
     steps:
       - uses: actions/checkout@v2
         with:
           submodules: true
+      - name: 🔨 Switch to Xcode 13.0
+        run: sudo xcode-select --switch /Applications/Xcode_13.0.app
       - run: brew install git-crypt
       - name: decrypt secrets if possible
         env:
@@ -73,10 +82,22 @@ jobs:
         with:
           path: 'ios/Pods'
           key: ${{ runner.os }}-pods-${{ hashFiles('ios/Podfile.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-pods-
+          # restore-keys: |
+          #   ${{ runner.os }}-pods-
       - name: 🥥 Install CocoaPods in `ios`
         run: pod install
         working-directory: ios
+      - name: Restore apps/bare-expo/ios/Pods from cache
+        uses: actions/cache@v2
+        id: pods-cache-bare-expo
+        with:
+          path: 'apps/bare-expo/ios/Pods'
+          key: ${{ runner.os }}-pods-${{ hashFiles('apps/bare-expo/ios/Podfile.lock') }}
+          # restore-keys: |
+          #   ${{ runner.os }}-pods-
+      - name: 🥥 Install CocoaPods in `apps/bare-expo/ios`
+        run: pod install
+        working-directory: apps/bare-expo/ios
       - name: Run native iOS unit tests
+        timeout-minutes: 45
         run: expotools native-unit-tests --platform ios

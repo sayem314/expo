@@ -20,7 +20,7 @@ internal class DevLauncherManifestParserTest {
 
   @Before
   fun setup() {
-    server.start(9090)
+    server.start()
   }
 
   @After
@@ -29,27 +29,106 @@ internal class DevLauncherManifestParserTest {
   }
 
   @Test
-  fun `checks if isManifestUrl detects expo server`() = runBlocking {
+  fun `isManifestUrl assumes unsuccessful responses indicate manifest URLs`() = runBlocking {
     val manifestParser = DevLauncherManifestParser(
       client,
-      Uri.parse(server.url("/").toString())
+      Uri.parse(server.url("/").toString()),
+      null
     )
 
-    server.enqueue(MockResponse().setResponseCode(200).setHeader("Exponent-Server", "exponent server"))
     server.enqueue(MockResponse().setResponseCode(200))
+    Truth.assertThat(manifestParser.isManifestUrl()).isFalse()
 
-    val isManifestUrl = manifestParser.isManifestUrl()
-    val isNotManifestUrl = manifestParser.isManifestUrl()
+    server.enqueue(MockResponse().setResponseCode(400))
+    Truth.assertThat(manifestParser.isManifestUrl()).isTrue()
 
-    Truth.assertThat(isManifestUrl).isTrue()
-    Truth.assertThat(isNotManifestUrl).isFalse()
+    server.enqueue(MockResponse().setResponseCode(500))
+    Truth.assertThat(manifestParser.isManifestUrl()).isTrue()
+  }
+
+  @Test
+  fun `isManifestUrl checks content-type header`() = runBlocking {
+    val manifestParser = DevLauncherManifestParser(
+      client,
+      Uri.parse(server.url("/").toString()),
+      null
+    )
+
+    server.enqueue(MockResponse().setResponseCode(200)
+        .setHeader("Content-Type", "application/json"))
+    Truth.assertThat(manifestParser.isManifestUrl()).isTrue()
+
+    server.enqueue(MockResponse().setResponseCode(200)
+        .setHeader("Content-Type", "application/json; charset=UTF-8"))
+    Truth.assertThat(manifestParser.isManifestUrl()).isTrue()
+
+    server.enqueue(MockResponse().setResponseCode(200)
+        .setHeader("Content-Type", "application/javascript"))
+    Truth.assertThat(manifestParser.isManifestUrl()).isFalse()
+
+    server.enqueue(MockResponse().setResponseCode(200)
+        .setHeader("Content-Type", "text/javascript"))
+    Truth.assertThat(manifestParser.isManifestUrl()).isFalse()
+
+    // content-type of response from http://localhost:8081 (no path) after running `react-native start`
+    server.enqueue(MockResponse().setResponseCode(200)
+        .setHeader("Content-Type", "text/html"))
+    Truth.assertThat(manifestParser.isManifestUrl()).isFalse()
+  }
+
+  @Test
+  fun `isManifestUrl detects expo dev server`() = runBlocking {
+    val manifestParser = DevLauncherManifestParser(
+      client,
+      Uri.parse(server.url("/").toString()),
+      null
+    )
+
+    server.enqueue(MockResponse().setResponseCode(200)
+        .setHeader("Exponent-Server", "exponent server"))
+    Truth.assertThat(manifestParser.isManifestUrl()).isTrue()
+
+    server.enqueue(MockResponse().setResponseCode(200))
+    Truth.assertThat(manifestParser.isManifestUrl()).isFalse()
+  }
+
+  @Test
+  fun `isManifestUrl includes expo-platform header`() = runBlocking {
+    val manifestParser = DevLauncherManifestParser(
+      client,
+      Uri.parse(server.url("/").toString()),
+      null
+    )
+
+    server.enqueue(MockResponse().setResponseCode(200))
+    manifestParser.isManifestUrl()
+
+    val request = server.takeRequest()
+    Truth.assertThat(request.getHeader("expo-platform")).isEqualTo("android")
+  }
+
+  @Test
+  fun `isManifestUrl includes installationID header`() = runBlocking {
+    val installationID = "test-installation-id"
+    val manifestParser = DevLauncherManifestParser(
+      client,
+      Uri.parse(server.url("/").toString()),
+      installationID
+    )
+
+    server.enqueue(MockResponse().setResponseCode(200))
+    manifestParser.isManifestUrl()
+
+    val request = server.takeRequest()
+    Truth.assertThat(request.getHeader("expo-dev-client-id")).isEqualTo(installationID)
   }
 
   @Test
   fun `checks if parseManifest parses successful response`() = runBlocking {
     val manifestParser = DevLauncherManifestParser(
       client,
-      Uri.parse(server.url("/").toString())
+      Uri.parse(server.url("/").toString()),
+      null
     )
 
     server.enqueue(
@@ -62,29 +141,29 @@ internal class DevLauncherManifestParserTest {
     val manifest = manifestParser.parseManifest()
 
     Truth.assertThat(manifest).isNotNull()
-    Truth.assertThat(manifest.slug).isEqualTo("native-component-list")
-    Truth.assertThat(manifest.hostUri).isEqualTo("127.0.0.1:19000")
-    Truth.assertThat(manifest.primaryColor).isEqualTo("#cccccc")
-    Truth.assertThat(manifest.bundleUrl).isEqualTo("http://127.0.0.1:19000/__generated__/AppEntry.bundle?platform=ios&dev=true&hot=false&minify=false")
-    Truth.assertThat(manifest.orientation).isEqualTo(DevLauncherOrientation.DEFAULT)
+    Truth.assertThat(manifest.getSlug()).isEqualTo("native-component-list")
+    Truth.assertThat(manifest.getHostUri()).isEqualTo("127.0.0.1:19000")
+    Truth.assertThat(manifest.getPrimaryColor()).isEqualTo("#cccccc")
+    Truth.assertThat(manifest.getBundleURL()).isEqualTo("http://127.0.0.1:19000/__generated__/AppEntry.bundle?platform=ios&dev=true&hot=false&minify=false")
+    Truth.assertThat(manifest.getOrientation()).isEqualTo(DevLauncherOrientation.DEFAULT)
   }
 
   @Test
   fun `checks if parseManifest fails on unsuccessful response`() {
     val manifestParser = DevLauncherManifestParser(
       client,
-      Uri.parse(server.url("/").toString())
+      Uri.parse(server.url("/").toString()),
+      null
     )
 
     server.enqueue(
       MockResponse()
         .setResponseCode(501)
     )
-    val failure = Assert.assertThrows(IllegalArgumentException::class.java) {
+    val failure = Assert.assertThrows(Exception::class.java) {
       runBlocking { manifestParser.parseManifest() }
     }
 
     Truth.assertThat(failure).isNotNull()
   }
-
 }

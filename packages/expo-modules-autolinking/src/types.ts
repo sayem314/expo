@@ -1,4 +1,6 @@
-export type SupportedPlatform = 'ios' | 'android';
+import { ExpoModuleConfig } from './ExpoModuleConfig';
+
+export type SupportedPlatform = 'ios' | 'android' | 'web';
 
 export interface SearchOptions {
   // Available in the CLI
@@ -6,6 +8,8 @@ export interface SearchOptions {
   ignorePaths?: string[] | null;
   exclude?: string[] | null;
   platform: SupportedPlatform;
+  silent?: boolean;
+  nativeModulesDir?: string | null;
 
   // Scratched from project's config
   flags?: Record<string, any>;
@@ -17,13 +21,19 @@ export interface ResolveOptions extends SearchOptions {
 
 export interface GenerateOptions extends ResolveOptions {
   target: string;
-  namespace: string;
+  namespace?: string;
   empty?: boolean;
+}
+
+export interface PatchReactImportsOptions {
+  podsRoot: string;
+  dryRun: boolean;
 }
 
 export type PackageRevision = {
   path: string;
   version: string;
+  config?: ExpoModuleConfig;
   duplicates?: PackageRevision[];
 };
 
@@ -32,3 +42,60 @@ export type SearchResults = {
 };
 
 export type ModuleDescriptor = Record<string, any>;
+
+/**
+ * Represents a raw config from `expo-module.json`.
+ */
+export interface RawExpoModuleConfig {
+  /**
+   * An array of supported platforms.
+   */
+  platforms?: SupportedPlatform[];
+
+  /**
+   * iOS-specific config.
+   */
+  ios?: {
+    /**
+     * Names of Swift native modules classes to put to the generated modules provider file.
+     */
+    modules?: string[];
+
+    /**
+     * Names of Swift native modules classes to put to the generated modules provider file.
+     * @deprecated Deprecated in favor of `modules`. Might be removed in the future releases.
+     */
+    modulesClassNames?: string[];
+
+    /**
+     * Names of Swift classes that hooks into `ExpoAppDelegate` to receive AppDelegate life-cycle events.
+     */
+    appDelegateSubscribers?: string[];
+
+    /**
+     * Names of Swift classes that implement `ExpoReactDelegateHandler` to hook React instance creation.
+     */
+    reactDelegateHandlers?: string[];
+
+    /**
+     * Podspec relative path.
+     */
+    podspecPath?: string;
+  };
+
+  /**
+   * Android-specific config.
+   */
+  android?: {
+    /**
+     * Full names (package + class name) of Kotlin native modules classes to put to the generated package provider file.
+     */
+    modules?: string[];
+
+    /**
+     * Full names (package + class name) of Kotlin native modules classes to put to the generated package provider file.
+     * @deprecated Deprecated in favor of `modules`. Might be removed in the future releases.
+     */
+    modulesClassNames?: string[];
+  };
+}

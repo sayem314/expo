@@ -1,10 +1,42 @@
 # Changelog
 
+### 🎉 New features
+
+- Added `requireAuthentication` and `authenticationPrompt` parameters to `SecureStoreOptions` options object used in `SecureStore.{deleteItemAsync, getItemAsync, setItemAsync}` methods to enable user authentication while accessing Secure Store. ([#14512](https://github.com/expo/expo/pull/14512) by [@j-piasecki](https://github.com/j-piasecki))
+
 ## Unpublished
 
 ### 🛠 Breaking changes
 
 ### 🎉 New features
+
+### 🐛 Bug fixes
+
+### 💡 Others
+
+## 11.1.0 — 2021-12-03
+
+_This version does not introduce any user-facing changes._
+
+## 11.0.1 — 2021-10-01
+
+_This version does not introduce any user-facing changes._
+
+## 11.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🐛 Bug fixes
+
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Migrated from `@unimodules/core` to `expo-modules-core`. ([#13757](https://github.com/expo/expo/pull/13757) by [@tsapeta](https://github.com/tsapeta))
+
+## 10.2.0 — 2021-06-16
 
 ### 🐛 Bug fixes
 
@@ -23,7 +55,7 @@
 ### 🐛 Bug fixes
 
 - Data saved with `expo-secure-store` is no longer lost upon ejecting, **if you first upgrade your app to SDK 41 before ejecting**. ([#11309](https://github.com/expo/expo/pull/11309) by [@cruzach](https://github.com/cruzach))
-> On Android, all of your `SecureStore` data will be migrated on app start-up. On iOS, keys and their associated data will be migrated whenever you call `getItemAsync` on that key. This means that any keys you don't `get` while on SDK 41 will **not** be migrated.
+  > On Android, all of your `SecureStore` data will be migrated on app start-up. On iOS, keys and their associated data will be migrated whenever you call `getItemAsync` on that key. This means that any keys you don't `get` while on SDK 41 will **not** be migrated.
 
 ## 10.0.0 — 2021-01-15
 

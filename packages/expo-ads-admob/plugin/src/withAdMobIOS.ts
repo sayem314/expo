@@ -1,8 +1,8 @@
 import { ConfigPlugin, InfoPlist, withInfoPlist } from '@expo/config-plugins';
 import { ExpoConfig } from '@expo/config-types';
 
-export const withAdMobIOS: ConfigPlugin = config => {
-  return withInfoPlist(config, config => {
+export const withAdMobIOS: ConfigPlugin = (config) => {
+  return withInfoPlist(config, (config) => {
     config.modResults = setAdMobConfig(config, config.modResults);
     return config;
   });
@@ -42,9 +42,11 @@ function setAdMobConfig(config: Pick<ExpoConfig, 'ios'>, infoPlist: InfoPlist): 
 
 const USER_TRACKING = 'This identifier will be used to deliver personalized ads to you.';
 
-export const withUserTrackingPermission: ConfigPlugin<{
-  userTrackingPermission?: string;
-} | void> = (config, { userTrackingPermission } = {}) => {
+export const withUserTrackingPermission: ConfigPlugin<
+  {
+    userTrackingPermission?: string;
+  } | void
+> = (config, { userTrackingPermission } = {}) => {
   if (!config.ios) config.ios = {};
   if (!config.ios.infoPlist) config.ios.infoPlist = {};
   config.ios.infoPlist.NSUserTrackingUsageDescription =

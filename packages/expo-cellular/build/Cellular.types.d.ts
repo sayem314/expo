@@ -18,5 +18,10 @@ export declare enum CellularGeneration {
     /**
      * Currently connected to a 4G cellular network. Includes HSPAP and LTE type connections.
      */
-    CELLULAR_4G = 3
+    CELLULAR_4G = 3,
+    /**
+     * Currently connected to a 5G cellular network. Includes NR and NRNSA type connections.
+     */
+    CELLULAR_5G = 4
 }
+//# sourceMappingURL=Cellular.types.d.ts.map

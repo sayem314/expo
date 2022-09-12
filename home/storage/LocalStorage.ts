@@ -14,7 +14,7 @@ const Keys = mapValues(
     History: 'history',
     Settings: 'settings',
   },
-  value => `Exponent.${value}`
+  (value) => `Exponent.${value}`
 );
 
 async function getSettingsAsync(): Promise<Settings> {
@@ -92,8 +92,8 @@ async function removeSessionAsync(): Promise<void> {
 
 // adds a hook for native code to query Home's history.
 // needed for routing push notifications in Home.
-addListenerWithNativeCallback('ExponentKernel.getHistoryUrlForExperienceId', async event => {
-  const { experienceId } = event;
+addListenerWithNativeCallback('ExponentKernel.getHistoryUrlForExperienceId', async (event) => {
+  const { experienceId } = event; // scopeKey
   let history = await getHistoryAsync();
   history = history.sort((item1, item2) => {
     // date descending -- we want to pick the most recent experience with this id,
@@ -103,7 +103,14 @@ addListenerWithNativeCallback('ExponentKernel.getHistoryUrlForExperienceId', asy
     const item1time = item1.time ? item1.time : 0;
     return item2time - item1time;
   });
-  const historyItem = history.find(item => item.manifest && item.manifest.id === experienceId);
+  // TODO(wschurman): only check for scope key in the future when most manifests contain it
+  // TODO(wschurman): update for new manifest2 format (Manifest)
+  const historyItem = history.find(
+    (item) =>
+      item.manifest &&
+      (item.manifest.id === experienceId ||
+        ('scopeKey' in item.manifest && item.manifest.scopeKey === experienceId))
+  );
   if (historyItem) {
     return { url: historyItem.url };
   }

@@ -46,7 +46,8 @@ const amrSettings = {
 // > Source: https://developer.android.com/reference/android/media/MediaRecorder.html#stop()
 
 export async function test(t) {
-  const shouldSkipTestsRequiringPermissions = await TestUtils.shouldSkipTestsRequiringPermissionsAsync();
+  const shouldSkipTestsRequiringPermissions =
+    await TestUtils.shouldSkipTestsRequiringPermissionsAsync();
   const describeWithPermissions = shouldSkipTestsRequiringPermissions ? t.xdescribe : t.describe;
 
   describeWithPermissions('Recording', () => {
@@ -252,7 +253,12 @@ export async function test(t) {
         await recordingObject.prepareToRecordAsync(Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY);
         await recordingObject.startAsync();
         await waitFor(defaultRecordingDurationMillis);
-        t.expect(recordingObject.getURI()).toContain('file:///');
+        if (Platform.OS === 'web') {
+          // On web, URI is not available until completion
+          t.expect(recordingObject.getURI()).toEqual(null);
+        } else {
+          t.expect(recordingObject.getURI()).toContain('file:///');
+        }
         await recordingObject.stopAndUnloadAsync();
       });
     });
@@ -318,7 +324,7 @@ export async function test(t) {
         await recordingObject.startAsync();
 
         const recordingDuration = defaultRecordingDurationMillis;
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
           setTimeout(async () => {
             await recordingObject.stopAndUnloadAsync();
             let error = null;
@@ -326,8 +332,11 @@ export async function test(t) {
               const { sound } = await recordingObject.createNewLoadedSound();
               await retryForStatus(sound, { isBuffering: false });
               const status = await sound.getStatusAsync();
-              // Android is slow and we have to take it into account when checking recording duration.
-              t.expect(status.durationMillis).toBeGreaterThan(recordingDuration * (7 / 10));
+              // Web doesn't return durations in Chrome - https://bugs.chromium.org/p/chromium/issues/detail?id=642012
+              if (Platform.OS !== 'web') {
+                // Android is slow and we have to take it into account when checking recording duration.
+                t.expect(status.durationMillis).toBeGreaterThan(recordingDuration * (7 / 10));
+              }
               t.expect(sound).toBeDefined();
             } catch (err) {
               error = err;
@@ -345,7 +354,7 @@ export async function test(t) {
           await recordingObject.startAsync();
 
           const recordingDuration = defaultRecordingDurationMillis;
-          await new Promise(resolve => {
+          await new Promise((resolve) => {
             setTimeout(async () => {
               await recordingObject.stopAndUnloadAsync();
               let error = null;
@@ -407,7 +416,7 @@ export async function test(t) {
         await recordingObject.startAsync();
 
         const recordingDuration = defaultRecordingDurationMillis;
-        await new Promise(resolve => {
+        await new Promise((resolve) => {
           setTimeout(async () => {
             await recordingObject.stopAndUnloadAsync();
             let error = null;
@@ -415,8 +424,12 @@ export async function test(t) {
               const { sound } = await recordingObject.createNewLoadedSoundAsync();
               await retryForStatus(sound, { isBuffering: false });
               const status = await sound.getStatusAsync();
-              // Android is slow and we have to take it into account when checking recording duration.
-              t.expect(status.durationMillis).toBeGreaterThan(recordingDuration * (6 / 10));
+
+              // Web doesn't return durations in Chrome - https://bugs.chromium.org/p/chromium/issues/detail?id=642012
+              if (Platform.OS !== 'web') {
+                // Android is slow and we have to take it into account when checking recording duration.
+                t.expect(status.durationMillis).toBeGreaterThan(recordingDuration * (6 / 10));
+              }
               t.expect(sound).toBeDefined();
             } catch (err) {
               error = err;
@@ -434,7 +447,7 @@ export async function test(t) {
           await recordingObject.startAsync();
 
           const recordingDuration = defaultRecordingDurationMillis;
-          await new Promise(resolve => {
+          await new Promise((resolve) => {
             setTimeout(async () => {
               await recordingObject.stopAndUnloadAsync();
               let error = null;
@@ -459,9 +472,10 @@ export async function test(t) {
       });
 
       t.it('creates and starts recording', async () => {
-        recordingObject = await Audio.Recording.createAsync(
+        const { recording } = await Audio.Recording.createAsync(
           Audio.RECORDING_OPTIONS_PRESET_LOW_QUALITY
         );
+        recordingObject = recording;
         await retryForStatus(recordingObject, { isRecording: true });
       });
     });

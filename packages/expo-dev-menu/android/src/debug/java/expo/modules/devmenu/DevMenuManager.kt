@@ -9,6 +9,7 @@ import android.os.Bundle
 import android.util.Log
 import android.view.KeyEvent
 import android.view.MotionEvent
+import android.view.inputmethod.InputMethodManager
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactNativeHost
 import com.facebook.react.bridge.LifecycleEventListener
@@ -39,7 +40,12 @@ import expo.modules.devmenu.detectors.ShakeDetector
 import expo.modules.devmenu.detectors.ThreeFingerLongPressDetector
 import expo.modules.devmenu.modules.DevMenuSettings
 import expo.modules.devmenu.react.DevMenuPackagerCommandHandlersSwapper
+import expo.modules.devmenu.react.DevMenuShakeDetectorListenerSwapper
+import expo.modules.devmenu.tests.DevMenuDisabledTestInterceptor
+import expo.modules.devmenu.tests.DevMenuTestInterceptor
 import expo.modules.devmenu.websockets.DevMenuCommandHandlersProvider
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
 import java.lang.ref.WeakReference
 
 object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
@@ -56,6 +62,8 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
   private var currentReactInstanceManager: WeakReference<ReactInstanceManager?> = WeakReference(null)
   private var currentScreenName: String? = null
   private val expoApiClient = DevMenuExpoApiClient()
+  private var canLaunchDevMenuOnStart = true
+  var testInterceptor: DevMenuTestInterceptor = DevMenuDisabledTestInterceptor()
 
   //region helpers
 
@@ -181,6 +189,11 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
         handlers
       )
 
+    DevMenuShakeDetectorListenerSwapper()
+      .swapShakeDetectorListener(
+        reactInstanceManager
+      ) {}
+
     if (reactInstanceManager.currentReactContext == null) {
       reactInstanceManager.addReactInstanceEventListener(object : ReactInstanceManager.ReactInstanceEventListener {
         override fun onReactContextInitialized(context: ReactContext) {
@@ -204,19 +217,20 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
     Log.i(DEV_MENU_TAG, "Delegate's context was loaded.")
 
     maybeInitDevMenuHost(reactContext.currentActivity?.application
-      ?: reactContext.applicationContext as Application)
+        ?: reactContext.applicationContext as Application)
     maybeStartDetectors(devMenuHost.getContext())
 
-    settings = if (reactContext.hasNativeModule(DevMenuSettings::class.java)) {
-      reactContext.getNativeModule(DevMenuSettings::class.java)!!
-    } else {
-      DevMenuDefaultSettings()
-    }.also {
-      shouldLaunchDevMenuOnStart = it.showsAtLaunch || !it.isOnboardingFinished
-      if (shouldLaunchDevMenuOnStart) {
-        reactContext.addLifecycleEventListener(this)
-      }
-    }
+    settings = (testInterceptor.overrideSettings()
+        ?: if (reactContext.hasNativeModule(DevMenuSettings::class.java)) {
+          reactContext.getNativeModule(DevMenuSettings::class.java)!!
+        } else {
+          DevMenuDefaultSettings()
+        }).also {
+          shouldLaunchDevMenuOnStart = canLaunchDevMenuOnStart && (it.showsAtLaunch || !it.isOnboardingFinished)
+          if (shouldLaunchDevMenuOnStart) {
+            reactContext.addLifecycleEventListener(this)
+          }
+        }
   }
 
   //endregion
@@ -323,6 +337,15 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
   }
 
   override fun onKeyEvent(keyCode: Int, event: KeyEvent): Boolean {
+    val imm = delegateActivity?.getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+    // The keyboard is active. We don't want to handle events that should go to text inputs.
+    // RN uses onKeyUp to handle all events connected with dev options. We need to do the same to override them.
+    // However, this event is also triggered when input is edited. A better way to handle that case
+    // is use onKeyDown event. However, it doesn't work well with key commands and we can't override RN implementation in that approach.
+    if (imm?.isAcceptingText != false) {
+      return false
+    }
+
     if (keyCode == KeyEvent.KEYCODE_MENU) {
       delegateActivity?.let { openMenu(it) }
       return true
@@ -395,6 +418,8 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
       ?.run { fetchData() } ?: emptyList()
   }
 
+  override val coroutineScope = CoroutineScope(Dispatchers.Default)
+
   override fun serializedItems(): List<Bundle> = delegateRootMenuItems.map { it.serialize() }
 
   override fun serializedScreens(): List<Bundle> = delegateScreens.map { it.serialize() }
@@ -406,6 +431,10 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
   override fun getMenuHost(): ReactNativeHost = devMenuHost
 
   override fun getExpoApiClient(): DevMenuExpoApiClientInterface = expoApiClient
+
+  override fun setCanLaunchDevMenuOnStart(canLaunchDevMenuOnStart: Boolean) {
+    this.canLaunchDevMenuOnStart = canLaunchDevMenuOnStart
+  }
 
   override fun synchronizeDelegate() {
     val newReactInstanceManager = requireNotNull(delegate).reactInstanceManager()
@@ -420,4 +449,3 @@ object DevMenuManager : DevMenuManagerInterface, LifecycleEventListener {
 
   //endregion
 }
-

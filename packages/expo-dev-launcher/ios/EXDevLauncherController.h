@@ -3,13 +3,14 @@
 
 #import <UIKit/UIKit.h>
 
-#import <EXUpdatesInterface/EXUpdatesInterface.h>
+#import <EXManifests/EXManifestsManifest.h>
+#import <EXUpdatesInterface/EXUpdatesExternalInterface.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
+@class EXDevLauncherInstallationIDHelper;
 @class EXDevLauncherPendingDeepLinkRegistry;
 @class EXDevLauncherController;
-@class EXDevLauncherManifest;
 @class EXDevLauncherErrorManager;
 
 @protocol EXDevLauncherControllerDelegate <NSObject>
@@ -24,7 +25,7 @@ NS_ASSUME_NONNULL_BEGIN
 @property (nonatomic, weak) RCTBridge * _Nullable appBridge;
 @property (nonatomic, strong) RCTBridge *launcherBridge;
 @property (nonatomic, strong) EXDevLauncherPendingDeepLinkRegistry *pendingDeepLinkRegistry;
-@property (nonatomic, strong) id<EXUpdatesInterface> updatesInterface;
+@property (nonatomic, strong) id<EXUpdatesExternalInterface> updatesInterface;
 
 + (instancetype)sharedInstance;
 
@@ -42,7 +43,9 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (NSDictionary<UIApplicationLaunchOptionsKey, NSObject*> *)getLaunchOptions;
 
-- (EXDevLauncherManifest * _Nullable)appManifest;
+- (EXManifestsManifest * _Nullable)appManifest;
+
+- (NSURL * _Nullable)appManifestURL;
 
 - (BOOL)isAppRunning;
 
@@ -50,7 +53,13 @@ NS_ASSUME_NONNULL_BEGIN
 
 - (EXDevLauncherErrorManager *)errorManager;
 
+- (EXDevLauncherInstallationIDHelper *)installationIDHelper;
+
 + (NSString * _Nullable)version;
+
+- (NSDictionary *)getBuildInfo;
+
+- (void)copyToClipboard:(NSString *)content;
 
 @end
 

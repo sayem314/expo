@@ -5,12 +5,28 @@
 #import "EXDevLauncherRedBox.h"
 #import "EXDevLauncherController.h"
 
+#if __has_include(<EXDevLauncher/EXDevLauncher-Swift.h>)
+// For cocoapods framework, the generated swift header will be inside EXDevLauncher module
+#import <EXDevLauncher/EXDevLauncher-Swift.h>
+#else
 #import <EXDevLauncher-Swift.h>
+#endif
+
+@interface EXDevLauncherRedBox ()
+
+@property (nonatomic, weak) RCTLogBox *logBox;
+
+@end
 
 @implementation EXDevLauncherRedBox
 
 @synthesize overrideBundleURL;
 @synthesize overrideReloadAction;
+
+- (void)registerLogBox:(RCTLogBox * _Nullable)logBox
+{
+  self.logBox = logBox;
+}
 
 - (void)addCustomButton:(NSString *)title onPressHandler:(RCTRedBoxButtonPressHandler)handler {
 
@@ -120,8 +136,19 @@
                 isUpdate:(BOOL)isUpdate
              errorCookie:(int)errorCookie
 {
+  if (isUpdate || errorCookie != -1) {
+    // These errors should be handled by LogBox
+    return;
+  }
+  
+  // hide method was removed from the RCTLogBox interface in RN 0.64
+  if ([self.logBox respondsToSelector:@selector(hide)]) {
+    [self.logBox performSelector:@selector(hide)];
+  }
+
   dispatch_async(dispatch_get_main_queue(), ^{
-    [[EXDevLauncherController sharedInstance].errorManager showErrorWithMessage:[self stripAnsi:message] stack:stack];
+    EXDevLauncherAppError *appError = [[EXDevLauncherAppError alloc] initWithMessage:[self stripAnsi:message] stack:stack];
+    [[EXDevLauncherController sharedInstance].errorManager showError:appError];
   });
 }
 

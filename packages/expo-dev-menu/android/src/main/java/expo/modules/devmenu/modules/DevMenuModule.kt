@@ -4,11 +4,10 @@ import com.facebook.react.bridge.Promise
 import com.facebook.react.bridge.ReactApplicationContext
 import com.facebook.react.bridge.ReactContextBaseJavaModule
 import com.facebook.react.bridge.ReactMethod
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
-class DevMenuModule(reactContext: ReactApplicationContext)
-  : ReactContextBaseJavaModule(reactContext) {
+class DevMenuModule(reactContext: ReactApplicationContext) :
+  ReactContextBaseJavaModule(reactContext) {
   override fun getName() = "ExpoDevMenu"
 
   private val devMenuManager by lazy {
@@ -36,12 +35,13 @@ class DevMenuModule(reactContext: ReactApplicationContext)
 
   @ReactMethod
   fun queryMyProjectsAsync(promise: Promise) {
-    GlobalScope.launch {
+    devMenuManager.coroutineScope.launch {
       try {
         devMenuManager
           .getExpoApiClient()
           .queryMyProjects()
           .use {
+            @Suppress("DEPRECATION_ERROR")
             promise.resolve(it.body()?.charStream()?.readText() ?: "")
           }
       } catch (e: Exception) {
@@ -51,13 +51,14 @@ class DevMenuModule(reactContext: ReactApplicationContext)
   }
 
   @ReactMethod
-  fun queryDevSessionsAsync(promise: Promise) {
-    GlobalScope.launch {
+  fun queryDevSessionsAsync(deviceID: String?, promise: Promise) {
+    devMenuManager.coroutineScope.launch {
       try {
         devMenuManager
           .getExpoApiClient()
-          .queryDevSessions()
+          .queryDevSessions(deviceID)
           .use {
+            @Suppress("DEPRECATION_ERROR")
             promise.resolve(it.body()?.charStream()?.readText() ?: "")
           }
       } catch (e: Exception) {

@@ -1,4 +1,4 @@
-import { EventEmitter, Subscription } from '@unimodules/core';
+import { EventEmitter, Subscription } from 'expo-modules-core';
 declare type ClipboardEvent = {
     /**
      * The new content of the user's clipboard.
@@ -51,3 +51,4 @@ export declare function addClipboardListener(listener: (event: ClipboardEvent) =
  * ```
  */
 export declare function removeClipboardListener(subscription: Subscription): void;
+//# sourceMappingURL=Clipboard.d.ts.map

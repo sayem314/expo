@@ -8,7 +8,44 @@
 
 ### 🐛 Bug fixes
 
+### 💡 Others
+
+## 11.1.0 — 2021-12-03
+
+### 💡 Others
+
+- Updated `@expo/config-plugins` from `4.0.2` to `4.0.14` ([#15621](https://github.com/expo/expo/pull/15621) by [@EvanBacon](https://github.com/EvanBacon))
+- Update `nullthrows` dependency. ([#15069](https://github.com/expo/expo/pull/15069) by [@Simek](https://github.com/Simek))
+
+## 11.0.1 — 2021-10-01
+
+_This version does not introduce any user-facing changes._
+
+## 11.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🎉 New features
+
+- Add `usePermissions` hooks from modules factory. ([#13850](https://github.com/expo/expo/pull/13850) by [@bycedric](https://github.com/bycedric))
+
+### 🐛 Bug fixes
+
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Migrated from `@unimodules/core` to `expo-modules-core`. ([#13757](https://github.com/expo/expo/pull/13757) by [@tsapeta](https://github.com/tsapeta))
+- Updated `@expo/config-plugins` ([#14443](https://github.com/expo/expo/pull/14443) by [@EvanBacon](https://github.com/EvanBacon))
+
+## 10.1.0 — 2021-06-16
+
+### 🐛 Bug fixes
+
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))
+- Upgraded underlying native libraries to v6.5.0. ([#13258](https://github.com/expo/expo/pull/13258) by [@cruzach](https://github.com/cruzach))
 
 ### 💡 Others
 

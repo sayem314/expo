@@ -6,6 +6,34 @@
 
 ### 🎉 New features
 
+- Native module on iOS is now written in Swift using the new API. ([#15705](https://github.com/expo/expo/pull/15705) by [@tsapeta](https://github.com/tsapeta))
+
+### 🐛 Bug fixes
+
+### 💡 Others
+
+## 10.0.1 — 2021-11-17
+
+_This version does not introduce any user-facing changes._
+
+## 10.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🐛 Bug fixes
+
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+## 9.3.0 — 2021-09-08
+
+### 💡 Others
+
+- Rewrite android code to Kotlin. ([#13996](https://github.com/expo/expo/pull/13996) by [@kkafar](https://github.com/kkafar))
+
+## 9.2.0 — 2021-06-16
+
 ### 🐛 Bug fixes
 
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))

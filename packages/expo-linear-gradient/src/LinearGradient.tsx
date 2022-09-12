@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { Platform, processColor, View } from 'react-native';
+import { Platform, processColor, ViewProps } from 'react-native';
 
 import NativeLinearGradient from './NativeLinearGradient';
 import { NativeLinearGradientPoint } from './NativeLinearGradient.types';
@@ -24,7 +24,7 @@ export type LinearGradientPoint =
   | NativeLinearGradientPoint;
 
 // @needsAudit
-export type LinearGradientProps = {
+export type LinearGradientProps = ViewProps & {
   /**
    * An array of colors that represent stops in the gradient. At least two colors are required
    * (for a single-color background, use the `style.backgroundColor` prop on a `View` component).
@@ -40,21 +40,24 @@ export type LinearGradientProps = {
    * - the second color, solid, from the 80% point to the end of the gradient view.
    *
    * > The color-stop locations must be ascending from least to greatest.
+   * @default [0.0, 1.0]
    */
   locations?: number[] | null;
   /**
    * For example, `{ x: 0.1, y: 0.2 }` means that the gradient will start `10%` from the left and `20%` from the top.
    *
    * **On web**, this only changes the angle of the gradient because CSS gradients don't support changing the starting position.
+   * @default { x: 0.5, y: 0.0 }
    */
   start?: LinearGradientPoint | null;
   /**
    * For example, `{ x: 0.1, y: 0.2 }` means that the gradient will end `10%` from the left and `20%` from the bottom.
    *
    * **On web**, this only changes the angle of the gradient because CSS gradients don't support changing the end position.
+   * @default { x: 0.5, y: 1.0 }
    */
   end?: LinearGradientPoint | null;
-} & React.ComponentProps<typeof View>;
+};
 
 /**
  * Renders a native view that transitions between multiple colors in a linear direction.

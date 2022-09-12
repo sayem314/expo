@@ -55,7 +55,7 @@ export default function AuthSessionScreen() {
           <TitledSwitch
             title="Switch Accounts"
             value={!!prompt}
-            setValue={value => setSwitch(value ? AuthSession.Prompt.SelectAccount : undefined)}
+            setValue={(value) => setSwitch(value ? AuthSession.Prompt.SelectAccount : undefined)}
           />
           <TitledSwitch title="Use PKCE" value={usePKCE} setValue={setPKCE} />
           <TitledPicker
@@ -64,7 +64,13 @@ export default function AuthSessionScreen() {
             value={language}
             setValue={setLanguage}
           />
-          <H4>ID: {Constants.manifest?.originalFullName || Constants.manifest?.id || 'unset'}</H4>
+          <H4>
+            ID:{' '}
+            {Constants.manifest?.originalFullName ||
+              Constants.manifest2?.extra?.expoClient?.originalFullName ||
+              Constants.manifest?.id ||
+              'unset'}
+          </H4>
         </View>
         <H2>Services</H2>
         <AuthSessionProviders
@@ -274,7 +280,7 @@ function Reddit({ redirectUri, prompt, usePKCE, useProxy }: any) {
   if (isInClient) {
     if (useProxy) {
       // Using the proxy in the client.
-      // This expects the URI to be 'https://auth.expo.io/@community/native-component-list'
+      // This expects the URI to be 'https://auth.expo.dev/@community/native-component-list'
       // so you'll need to be signed into community or be using the public demo
       clientId = 'IlgcZIpcXF1eKw';
     } else {
@@ -325,7 +331,7 @@ function Imgur({ redirectUri, prompt, usePKCE, useProxy }: any) {
   if (isInClient) {
     if (useProxy) {
       // Using the proxy in the client.
-      // This expects the URI to be 'https://auth.expo.io/@community/native-component-list'
+      // This expects the URI to be 'https://auth.expo.dev/@community/native-component-list'
       // so you'll need to be signed into community or be using the public demo
       clientId = '5287e6c03ffac8b';
     } else {
@@ -621,11 +627,11 @@ function Strava({ redirectUri, prompt, usePKCE, useProxy }: any) {
           code: result.params.code,
           extraParams: {
             // You must use the extraParams variation of clientSecret.
-            client_secret: '...',
+            client_secret: `...`,
           },
         },
         discovery
-      ).then(result => {
+      ).then((result) => {
         console.log('RES: ', result);
       });
     }

@@ -6,6 +6,43 @@
 
 ### 🎉 New features
 
+- The module on iOS is now written in Swift and uses JSI host object instead of the bridge module for communication between JavaScript and native code. ([#15875](https://github.com/expo/expo/pull/15875) by [@tsapeta](https://github.com/tsapeta))
+
+### 🐛 Bug fixes
+
+### 💡 Others
+
+## 12.1.1 — 2021-12-18
+
+### 🐛 Bug fixes
+
+- Fix iOS project build break on SDK 44. ([#15626](https://github.com/expo/expo/pull/15626) by [@kudo](https://github.com/kudo))
+
+## 12.1.0 — 2021-12-03
+
+_This version does not introduce any user-facing changes._
+
+## 12.0.1 — 2021-10-27
+
+_This version does not introduce any user-facing changes._
+
+## 12.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🐛 Bug fixes
+
+- Fix bug causing synchronous calls to break React Native Debugger. ([#13616](https://github.com/expo/expo/pull/13616) by [@stdavis](https://github.com/stdavis))
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Rewrite android code to Kotlin. ([#13994](https://github.com/expo/expo/pull/13994) by [@kkafar](https://github.com/kkafar))
+
+## 11.2.0 — 2021-06-16
+
 ### 🐛 Bug fixes
 
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))

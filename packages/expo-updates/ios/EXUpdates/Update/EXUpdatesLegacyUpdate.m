@@ -8,18 +8,18 @@
 
 NS_ASSUME_NONNULL_BEGIN
 
-static NSString * const EXUpdatesExpoAssetBaseUrl = @"https://d1wp6m56sqw74a.cloudfront.net/~assets/";
+static NSString * const EXUpdatesExpoAssetBaseUrl = @"https://classic-assets.eascdn.net/~assets/";
 static NSString * const EXUpdatesExpoIoDomain = @"expo.io";
 static NSString * const EXUpdatesExpHostDomain = @"exp.host";
 static NSString * const EXUpdatesExpoTestDomain = @"expo.test";
 
 @implementation EXUpdatesLegacyUpdate
 
-+ (EXUpdatesUpdate *)updateWithLegacyManifest:(EXUpdatesLegacyRawManifest *)manifest
++ (EXUpdatesUpdate *)updateWithLegacyManifest:(EXManifestsLegacyManifest *)manifest
                                        config:(EXUpdatesConfig *)config
                                      database:(EXUpdatesDatabase *)database
 {
-  EXUpdatesUpdate *update = [[EXUpdatesUpdate alloc] initWithRawManifest:manifest
+  EXUpdatesUpdate *update = [[EXUpdatesUpdate alloc] initWithManifest:manifest
                                                                   config:config
                                                                 database:database];
 
@@ -31,7 +31,7 @@ static NSString * const EXUpdatesExpoTestDomain = @"expo.test";
   } else {
     NSString *updateId = manifest.releaseID;
     update.updateId = [[NSUUID alloc] initWithUUIDString:(NSString *)updateId];
-    NSAssert(update.updateId, @"update ID should be a valid UUID");
+    NSAssert(update.updateId, @"updateId should be a valid UUID");
 
     NSString *commitTimeString = manifest.commitTime;
     update.commitTime = [RCTConvert NSDate:commitTimeString];
@@ -47,21 +47,15 @@ static NSString * const EXUpdatesExpoTestDomain = @"expo.test";
   NSString *bundleUrlString = manifest.bundleUrl;
   NSArray *assets = manifest.bundledAssets ?: @[];
 
-  id runtimeVersion = manifest.runtimeVersion;
-  if (runtimeVersion && [runtimeVersion isKindOfClass:[NSDictionary class]]) {
-    id runtimeVersionIos = ((NSDictionary *)runtimeVersion)[@"ios"];
-    NSAssert([runtimeVersionIos isKindOfClass:[NSString class]], @"runtimeVersion['ios'] should be a string");
-    update.runtimeVersion = (NSString *)runtimeVersionIos;
-  } else if (runtimeVersion && [runtimeVersion isKindOfClass:[NSString class]]) {
-    update.runtimeVersion = (NSString *)runtimeVersion;
+  if (manifest.runtimeVersion != nil) {
+    update.runtimeVersion = manifest.runtimeVersion;
   } else {
-    NSString *sdkVersion = manifest.sdkVersion;
-    NSAssert(sdkVersion != nil, @"sdkVersion should not be null");
-    update.runtimeVersion = sdkVersion;
+    NSAssert(manifest.sdkVersion != nil, @"Manifest JSON must have a valid sdkVersion property defined");
+    update.runtimeVersion = manifest.sdkVersion;
   }
 
   NSURL *bundleUrl = [NSURL URLWithString:bundleUrlString];
-  NSAssert(bundleUrl, @"bundleUrl should be a valid URL");
+  NSAssert(bundleUrl, @"Manifest JSON must have a valid URL as the bundleUrl property");
 
   NSMutableArray<EXUpdatesAsset *> *processedAssets = [NSMutableArray new];
 
@@ -71,11 +65,11 @@ static NSString * const EXUpdatesExpoTestDomain = @"expo.test";
   jsBundleAsset.isLaunchAsset = YES;
   jsBundleAsset.mainBundleFilename = EXUpdatesEmbeddedBundleFilename;
   [processedAssets addObject:jsBundleAsset];
-  
+
   NSURL *bundledAssetBaseUrl = [[self class] bundledAssetBaseUrlWithManifest:manifest config:config];
 
   for (NSString *bundledAsset in assets) {
-    NSAssert([bundledAsset isKindOfClass:[NSString class]], @"bundledAssets must be an array of strings");
+    NSAssert([bundledAsset isKindOfClass:[NSString class]], @"Manifest JSON bundledAssets property must be an array of strings, found unexpected value: %@", bundledAsset);
 
     NSRange extensionStartRange = [bundledAsset rangeOfString:@"." options:NSBackwardsSearch];
     NSUInteger prefixLength = [@"asset_" length];
@@ -103,7 +97,7 @@ static NSString * const EXUpdatesExpoTestDomain = @"expo.test";
     [processedAssets addObject:asset];
   }
 
-  update.manifest = manifest.rawManifestJSON;
+  update.manifestJSON = manifest.rawManifestJSON;
   update.keep = YES;
   update.bundleUrl = bundleUrl;
   update.assets = processedAssets;
@@ -111,7 +105,7 @@ static NSString * const EXUpdatesExpoTestDomain = @"expo.test";
   return update;
 }
 
-+ (NSURL *)bundledAssetBaseUrlWithManifest:(EXUpdatesLegacyRawManifest *)manifest config:(EXUpdatesConfig *)config
++ (NSURL *)bundledAssetBaseUrlWithManifest:(EXManifestsLegacyManifest *)manifest config:(EXUpdatesConfig *)config
 {
   NSURL *manifestUrl = config.updateUrl;
   NSString *host = manifestUrl.host;

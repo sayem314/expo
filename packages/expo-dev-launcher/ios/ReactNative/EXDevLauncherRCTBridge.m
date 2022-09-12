@@ -1,9 +1,13 @@
 // Copyright 2015-present 650 Industries. All rights reserved.
 
 #import "EXDevLauncherRCTBridge.h"
+#import "RCTCxxBridge+Private.h"
+
 #import <React/RCTPerformanceLogger.h>
 #import <React/RCTDevSettings.h>
 #import <React/RCTDevMenu.h>
+
+@import EXDevMenuInterface;
 
 @implementation EXDevLauncherRCTCxxBridge
 
@@ -14,12 +18,41 @@
  */
 - (RCTDevSettings *)devSettings
 {
-  return nil;
+  //  uncomment below to enable fast refresh for development builds of DevLauncher
+  // return super.devSettings;
+ return nil;
 }
 
 - (RCTDevMenu *)devMenu
 {
   return nil;
+}
+
+- (NSArray<Class> *)filterModuleList:(NSArray<Class> *)modules
+{
+  NSArray<NSString *> *allowedModules = @[@"RCT", @"DevMenu"];
+  NSArray<Class> *filteredModuleList = [modules filteredArrayUsingPredicate:[NSPredicate predicateWithBlock:^BOOL(id  _Nullable clazz, NSDictionary<NSString *,id> * _Nullable bindings) {
+    if ([clazz conformsToProtocol:@protocol(DevMenuExtensionProtocol)]) {
+      return true;
+    }
+    
+    NSString* clazzName = NSStringFromClass(clazz);
+    for (NSString *allowedModule in allowedModules) {
+      if ([clazzName hasPrefix:allowedModule]) {
+        return true;
+      }
+    }
+    return false;
+  }]];
+  
+  return filteredModuleList;
+}
+
+- (NSArray<RCTModuleData *> *)_initializeModules:(NSArray<Class> *)modules
+                               withDispatchGroup:(dispatch_group_t)dispatchGroup
+                                lazilyDiscovered:(BOOL)lazilyDiscovered
+{
+  return [super _initializeModules:[self filterModuleList:modules] withDispatchGroup:dispatchGroup lazilyDiscovered:lazilyDiscovered];
 }
 
 @end

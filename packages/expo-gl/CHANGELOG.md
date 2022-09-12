@@ -8,6 +8,43 @@
 
 ### 🐛 Bug fixes
 
+- Fix segfault in iOS draw loop. ([#15653](https://github.com/expo/expo/pull/15653) by [@wkozyra95](https://github.com/wkozyra95))
+
+### 💡 Others
+
+## 11.1.1 — 2021-12-08
+
+_This version does not introduce any user-facing changes._
+
+## 11.1.0 — 2021-12-03
+
+### 🎉 New features
+
+- Add support for reanimated worklets. ([#15296](https://github.com/expo/expo/pull/15296) by [@wkozyra95](https://github.com/wkozyra95))
+
+## 11.0.1 — 2021-10-01
+
+_This version does not introduce any user-facing changes._
+
+## 11.0.0 — 2021-09-28
+
+### 🛠 Breaking changes
+
+- Dropped support for iOS 11.0 ([#14383](https://github.com/expo/expo/pull/14383) by [@cruzach](https://github.com/cruzach))
+
+### 🐛 Bug fixes
+
+- Remove `OES_vertex_array_object` from list of supported extensions. ([#14299](https://github.com/expo/expo/pull/14299) by [@wkozyra95](https://github.com/wkozyra95))
+- Fix building errors from use_frameworks! in Podfile. ([#14523](https://github.com/expo/expo/pull/14523) by [@kudo](https://github.com/kudo))
+
+### 💡 Others
+
+- Migrated from `@unimodules/core` to `expo-modules-core`. ([#13757](https://github.com/expo/expo/pull/13757) by [@tsapeta](https://github.com/tsapeta))
+
+## 10.4.0 — 2021-06-16
+
+### 🐛 Bug fixes
+
 - Enable kotlin in all modules. ([#12716](https://github.com/expo/expo/pull/12716) by [@wschurman](https://github.com/wschurman))
 
 ### 💡 Others

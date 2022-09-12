@@ -1,6 +1,8 @@
 package expo.modules.devmenu
 
 import android.content.Context
+import android.content.pm.ActivityInfo
+import android.os.Build
 import android.os.Bundle
 import android.view.KeyEvent
 import android.view.ViewGroup
@@ -10,8 +12,8 @@ import com.facebook.react.ReactDelegate
 import com.facebook.react.ReactInstanceManager
 import com.facebook.react.ReactRootView
 import com.facebook.react.devsupport.interfaces.DevSupportManager
-import expo.modules.devmenu.helpers.getPrivateDeclaredFiledValue
-import expo.modules.devmenu.helpers.setPrivateDeclaredFiledValue
+import expo.modules.devmenu.helpers.getPrivateDeclaredFieldValue
+import expo.modules.devmenu.helpers.setPrivateDeclaredFieldValue
 import java.util.*
 
 /**
@@ -36,10 +38,10 @@ class DevMenuActivity : ReactActivity() {
         }
 
         val reactDelegate: ReactDelegate = ReactActivityDelegate::class.java
-          .getPrivateDeclaredFiledValue("mReactDelegate", this)
+          .getPrivateDeclaredFieldValue("mReactDelegate", this)
 
         ReactDelegate::class.java
-          .setPrivateDeclaredFiledValue("mReactRootView", reactDelegate, rootView)
+          .setPrivateDeclaredFieldValue("mReactRootView", reactDelegate, rootView)
 
         // Removes the root view from the previous activity
         (rootView.parent as? ViewGroup)?.removeView(rootView)
@@ -69,6 +71,18 @@ class DevMenuActivity : ReactActivity() {
     }
   }
 
+  override fun onCreate(savedInstanceState: Bundle?) {
+    // Due to a bug in API 26, we can't set the orientation in translucent activity.
+    // See https://stackoverflow.com/questions/48072438/java-lang-illegalstateexception-only-fullscreen-opaque-activities-can-request-o
+    requestedOrientation = if (Build.VERSION.SDK_INT == Build.VERSION_CODES.O) {
+      ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED
+    } else {
+      ActivityInfo.SCREEN_ORIENTATION_PORTRAIT
+    }
+
+    super.onCreate(savedInstanceState)
+  }
+
   override fun onKeyUp(keyCode: Int, event: KeyEvent): Boolean {
     return if (keyCode == KeyEvent.KEYCODE_MENU || DevMenuManager.onKeyEvent(keyCode, event)) {
       DevMenuManager.closeMenu()
@@ -90,7 +104,7 @@ class DevMenuActivity : ReactActivity() {
 
     if (supportsDevelopment) {
       val devSupportManager: DevSupportManager =
-        ReactInstanceManager::class.java.getPrivateDeclaredFiledValue(
+        ReactInstanceManager::class.java.getPrivateDeclaredFieldValue(
           "mDevSupportManager", instanceManager
         )
 

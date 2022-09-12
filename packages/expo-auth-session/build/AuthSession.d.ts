@@ -6,7 +6,7 @@ import { DiscoveryDocument, fetchDiscoveryAsync, Issuer, IssuerOrDiscovery, Prov
 import { generateHexStringAsync } from './PKCE';
 export declare function startAsync(options: AuthSessionOptions): Promise<AuthSessionResult>;
 export declare function dismiss(): void;
-export declare const getDefaultReturnUrl: (urlPath?: string | undefined, options?: Pick<Linking.CreateURLOptions, "scheme" | "isTripleSlashed"> | undefined) => string;
+export declare const getDefaultReturnUrl: (urlPath?: string | undefined, options?: Omit<Linking.CreateURLOptions, "queryParams"> | undefined) => string;
 /**
  * @deprecated Use `makeRedirectUri({ path, useProxy })` instead.
  *
@@ -67,3 +67,4 @@ export { AuthError, TokenError } from './Errors';
 export { AuthSessionOptions, AuthSessionRedirectUriOptions, AuthSessionResult, AuthRequest, AuthRequestConfig, AuthRequestPromptOptions, CodeChallengeMethod, DiscoveryDocument, Issuer, IssuerOrDiscovery, Prompt, ProviderMetadata, ResponseType, resolveDiscoveryAsync, fetchDiscoveryAsync, generateHexStringAsync, };
 export { TokenResponse, AccessTokenRequest, RefreshTokenRequest, RevokeTokenRequest, revokeAsync, refreshAsync, exchangeCodeAsync, fetchUserInfoAsync, } from './TokenRequest';
 export * from './TokenRequest.types';
+//# sourceMappingURL=AuthSession.d.ts.map
